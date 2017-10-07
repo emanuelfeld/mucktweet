@@ -1,0 +1,111 @@
+body {
+  font-family: monospace;
+  line-height: 1.6em;
+  font-size: 15px;
+  color: #333;
+  width: 720px;
+  margin: 0 auto;
+}
+
+a {
+  text-decoration: none;
+  color: #08c;
+}
+
+header span[selected] {
+  background-color: #333;
+  color: white;
+}
+
+div {
+  width: 720px;
+  margin: 0 auto;
+}
+
+.container {
+  padding: 20px 0 20px 0;
+}
+
+.report {
+  padding: 20px 0 20px 0;  
+}
+
+.body > :first-child { margin-top: 0; }
+.body > :last-child { margin-bottom: 0; }
+
+.meta {
+  background: #f9f9f9;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 8px 15px;
+}
+
+.body {
+  padding: 15px;
+}
+
+.body > :first-child { margin-top: 0; }
+.body > :last-child { margin-bottom: 0; }
+
+h1 {
+  font-weight: normal;
+  font-size: 25px;
+}
+
+#menu-bar {
+  padding-bottom: 20px;
+}
+
+header {
+  padding: 20px 0px 20px 0px;
+  border-bottom: 1px solid #333;
+  margin-bottom: 20px;  
+}
+
+.menu-item {
+  padding: 5px;
+  border: 1px solid #333;
+}
+
+#menu-donate {
+  background-color: #7bc043;
+  color: white;
+  border: 1px solid #67a337;
+}
+
+.menu-item:not([selected]):hover {
+  cursor:pointer;
+}
+
+
+header h1 {
+  font-size: 3em;
+  padding-bottom: 10px;
+}
+
+.download-button {
+  padding: 5px;
+  border: 1px solid #333;
+}
+
+.download-button:hover {
+  cursor: pointer;
+}
+.badge {
+  padding: 3px 5px;
+  /*border-radius: 3px;*/
+  background: #999;
+  color: #fff;
+  /*font-weight: bold;*/
+  margin-right: 10px;
+  text-transform: capitalize;
+}
+
+.badge {
+    text-align: center;
+  width: 80px;
+
+}
+
+.available { background: #ee4035; }
+.suspended { background: #7bc043; }
+.deleted { background: #0392cf; }

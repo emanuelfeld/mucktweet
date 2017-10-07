@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html class="">
+<head class="">
+    <title>MuckTweet</title>
+    <script src="js/options.js">
+    </script>
+    <link href="css/options.css" rel="stylesheet" type="text/css">
+</head>
+<body class="body">
+    <header>
+        <h1>MuckTweet</h1>
+        <div id="menu-bar">
+            <span class="menu-item dashboard" selected id="menu-dashboard">Dashboard</span> <span class="menu-item about" id="menu-about">About</span> <span class="menu-item issues" id="menu-issues">Report Bugs</span> <span class="menu-item download" id="menu-download">Download Data</span> <span class="menu-item donate" id="menu-donate">Donate</span>
+        </div>
+    </header>
+    <div class="dashboard container" style="display: block;">
+        <h1 id="title">Since the last update on</h1>
+        <div class="report" id="suspended">
+            <h1><span class='badge suspended'>Suspended</span></h1>
+            <div class="default">
+                None
+            </div>
+        </div>
+        <div class="report" id="deleted">
+            <h1><span class='badge deleted'>Deleted</span></h1>
+            <div class="default">
+                None
+            </div>
+        </div>
+        <div class="report" id="available">
+            <h1><span class='badge available'>Remaining</span></h1>
+            <div class="default">
+                None
+            </div>
+        </div>
+    </div>
+    <div class="about container" style="display: none;">
+        <p>It's 2017 and Twitter's Arab Spring is long over.</p>
+
+        <p>We've traded <a href="https://en.wikipedia.org/wiki/Gamergate_controversy#Harassment_and_Twitter">Gamergate</a> for <a href="https://en.wikipedia.org/wiki/Pizzagate_conspiracy_theory" target="_blank">Pizzagate</a>. Trump uses his account as a literal <a href="https://www.nytimes.com/2016/12/08/us/politics/donald-trump-twitter-carrier-chuck-jones.html" target="_blank">bully pulpit</a>. Journalists <a href="https://newrepublic.com/article/134534/told-truth-donald-trump-rally-trolls-threatened-life">receive death threats</a> in 140 characters (well, now 280). Leslie Jones has been forced to perform double duty as a <a href="https://www.thecut.com/2016/08/a-timeline-of-leslie-joness-horrific-online-abuse.html">troll buster</a>. And even Twitter co-founder <a href="https://twitter.com/biz/status/913992534157750272" target="_blank">Biz Stone struggles</a> to get neo-Nazis booted.</p>
+
+        <p>For those of us without millions of followers, relief can seem more elusive still.</p>
+
+        <p>What happens to our abuse reports? Which ones are addressed and which go unresolved? How long does the process take?</p>
+
+        <p><strong>MuckTweet</strong> helps keep you in the loop.</p>
+
+        <p>Whenever you report a user or tweet on <a href="https://twitter.com" target="_blank">Twitter.com</a>, the MuckTweet extension makes a record. It then automatically checks the site for updates on that report&mdash;no extra work needed on your part. All information is stored locally on your computer and is never sent elsewhere.</p>
+
+        <p>You can contact <span style="text-decoration: underline;">mucktweet at gmail dot com</span> with questions.</p>
+    </div>
+    <div class="donate container" style="display: none;">
+        <p>Buy us a cuppa tea.</p>
+        <span class="download-button"><a href="https://paypal.me/efeld/10" target="_blank">PayPal</a></span>
+    </div>
+    <div class="download container" style="display: none;">
+        <p>Download a local copy of your data.</p>
+
+        <span id="user-data" class="download-button">User Data &#8600;</span> <span id="tweet-data" class="download-button">Tweet Data &#8600;</span>
+    </div>
+    <div class="issues container" style="display: none;">
+        <p>Found a bug? You can send a report using <a href="https://goo.gl/forms/gq94rnt2jTLTZa4k2" target="_blank">this form</a> or create an issue in the <a href="https://github.com/emanuelfeld/mucktweet/issues" target="_blank">GitHub repository</a>.</p>
+
+        <p>I'll do my best to resolve it in a timely manner. Keep in mind that MuckTweet is free. I'm not being paid to make or maintain it.</p> 
+
+        <p>It would be really nice if you sent a donation.</p>
+    </div>
+</body>
+</html>

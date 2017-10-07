@@ -9,9 +9,11 @@
         ]
     },
     "web_accessible_resources": [
+        "dashboard.html",
         "popup.html",
+        "about.html",
         "js/main.js",
-        "js/popup.js"
+        "js/options.js"
     ],
     "content_scripts": [
         {
@@ -25,14 +27,14 @@
             "run_at": "document_end"
         }
     ],
+    "options_page": "dashboard.html",
     "permissions": [
         "https://*.twitter.com/*",
         "storage",
         "contextMenus"
     ],
     "browser_action": {
-        "default_title": "MuckTweet",
-        "default_popup": "popup.html"
+        "default_title": "MuckTweet"
     },
     "offline_enabled": false
 }
