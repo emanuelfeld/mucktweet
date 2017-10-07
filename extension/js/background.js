@@ -21,6 +21,12 @@
   let localStorage = window.browser.storage.local
   let badgeCounter = 0
 
+  window.browser.runtime.onInstalled.addListener(function () {
+    const url = window.browser.extension.getURL('dashboard.html')
+    window.browser.tabs.update({
+      'active': true, 
+      'url': url + '#about'})  
+  })
   window.browser.runtime.onMessage.addListener(handleMessage)
   window.browser.runtime.onConnect.addListener(handlePort)
 
