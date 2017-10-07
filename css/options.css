@@ -1,112 +1,99 @@
 body {
-  font-family: monospace;
-  line-height: 1.6em;
-  font-size: 15px;
-  color: #333;
-  width: 720px;
-  margin: 0 auto;
-  padding: 15px;
+color:#333;
+font-family:monospace;
+font-size:15px;
+line-height:1.6em;
+margin:0 auto;
+padding:15px;
+width:720px;
 }
 
 body> :first-child {
-  margin-top: 0;
+margin-top:0;
 }
 
 body> :last-child {
-  margin-bottom: 0;
-}
-
-a {
-  text-decoration: none;
-  color: #08c;
-}
-
-div {
-  width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-weight: normal;
-  font-size: 25px;
+margin-bottom:0;
 }
 
 header {
-  padding: 20px 0px 20px 0px;
-  border-bottom: 1px solid #333;
-  margin-bottom: 10px;
+border-bottom:1px solid #333;
+margin-bottom:10px;
+padding:20px 0;
 }
 
-header h1 {
-  font-size: 3em;
-  padding-bottom: 10px;
+header > h1 {
+font-size:3em;
+padding-bottom:10px;
 }
 
-.menu-item[selected] {
-  background-color: #333;
-  color: white;
+header > div {
+padding-bottom:20px;
+}
+
+h1 {
+font-size:25px;
+font-weight:400;
+}
+
+div {
+margin:0 auto;
+width:720px;
+}
+
+a {
+color:#08c;
+text-decoration:none;
 }
 
 .container {
-  padding: 20px 0 20px 0;
+padding:20px 0;
 }
 
-.report {
-  padding: 20px 0 20px 0;    
+.menu-item[selected] {
+background-color:#333;
+color:#FFF;
 }
 
-.meta {
-  background: #f9f9f9;
-  border-bottom: 1px solid #e0e0e0;
-  padding: 8px 15px;
+.row-item {
+background:#f9f9f9;
+border-bottom:1px solid #e0e0e0;
+padding:8px 15px;
 }
 
-#menu-bar {
-  padding-bottom: 20px;
+.button {
+border:1px solid #333;
+padding:5px;
 }
 
-.menu-item {
-  padding: 5px;
-  border: 1px solid #333;
-}
-
-.menu-item:not([selected]):hover {
-  cursor: pointer;
-}
-
-#menu-donate {
-  background-color: #7bc043;
-  color: white;
-  border: 1px solid #67a337;
-}
-
-.download-button {
-  padding: 5px;
-  border: 1px solid #333;
-}
-
-.download-button:hover {
-  cursor: pointer;
+.button.donate {
+background-color:#7bc043;
+border:1px solid #67a337;
+color:#FFF;
 }
 
 .badge {
-  padding: 3px 5px;
-  background: #999;
-  color: #fff;
-  margin-right: 10px;
-  text-transform: capitalize;
-  text-align: center;
-  width: 80px;
+background:#999;
+color:#fff;
+margin-right:10px;
+padding:3px 5px;
+text-align:center;
+text-transform:capitalize;
+width:80px;
 }
 
-.available {
-  background: #ee4035;
+.badge.available {
+background:#ee4035;
 }
 
-.suspended {
-  background: #7bc043;
+.badge.suspended {
+background:#7bc043;
 }
 
-.deleted {
-  background: #0392cf;
+.badge.deleted {
+background:#0392cf;
+}
+
+.menu-item:not([selected]):hover,.button:hover {
+cursor:pointer;
 }

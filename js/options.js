@@ -12,56 +12,74 @@
   localStorage.get({
     'mucktweetLastUpdate': 0
   }, function (res) {
+    console.log('Adding date to section title.')
     let title = document.getElementById('title')
     title.textContent += ' ' + new Date(res.mucktweetLastUpdate).toJSON().slice(0, 10)
   })
 
+  window.addEventListener('hashchange', clickHashTab, false)
+
+  function clickHashTab () {
+    console.log('Setting location hash.')
+    const sectionId = window.location.hash.split('#')[1]
+    document.querySelector('.menu-item.' + sectionId).click()
+  }
+
   window.onload = function () {
-    let selectedMenuItem = document.querySelector('.menu-item[selected]')
-    if (selectedMenuItem.id === 'menu-dashboard') {
+    const selectedMenuItem = document.querySelector('.menu-item[selected]')
+    if (selectedMenuItem.classList.contains('updates')) {
+      console.log('Polling background for updates.')
       getUpdates('user', formatUpdates)
       getUpdates('tweet', formatUpdates)
     }
+
     if (window.location.hash) {
       clickHashTab()
     }
   }
 
-  function clickHashTab () {
-    let menuId = 'menu-' + window.location.hash.split('#')[1]
-    document.getElementById(menuId).click()
-  }
-
-  window.addEventListener('hashchange', clickHashTab, false)
-
   document.onclick = function (evt) {
-    if (evt.srcElement.classList.contains('menu-item') && evt.srcElement.hasAttribute('selected') === false) {
-      let oldSelectedMenuItem = document.querySelector('.menu-item[selected]')
-      oldSelectedMenuItem.removeAttribute('selected')
-      let oldSectionClass = oldSelectedMenuItem.id.split('-')[1]
-      document.querySelector('div.' + oldSectionClass).style.display = 'none'
+    let element = evt.srcElement
+    if (element.classList.contains('menu-item') && element.hasAttribute('selected') === false) {
+      console.log('Migrating to new section.')
+      let prevSelectedMenuItem = document.querySelector('.menu-item[selected]')
+      prevSelectedMenuItem.removeAttribute('selected')
+      let prevSectionClass = prevSelectedMenuItem.id.split('-')[1]
+      document.querySelector('section.' + prevSectionClass).style.display = 'none'
 
-      evt.srcElement.setAttribute('selected', '')
-      let sectionClass = evt.srcElement.id.split('-')[1]
-      document.querySelector('div.' + sectionClass).style.display = 'block'
+      // select and show new section, set hash
+      element.setAttribute('selected', '')
+      let sectionClass = element.id.split('-')[1]
+      document.querySelector('section.' + sectionClass).style.display = 'block'
       window.location.hash = '#' + sectionClass
     } else if (evt.srcElement.id === 'user-data') {
+      console.log('Requesting user data download.')
       window.browser.runtime.sendMessage({
         'type': 'download',
         'content': 'user'})
     } else if (evt.srcElement.id === 'tweet-data') {
+      console.log('Requesting tweet data download.')
       window.browser.runtime.sendMessage({
         'type': 'download',
         'content': 'tweet'})
     }
   }
 
+  function getUpdates (storeName, fn) {
+    // stream in updates
+    let port = window.browser.runtime.connect({'name': storeName})
+    port.postMessage()
+    port.onMessage.addListener(function (msg) {
+      fn(storeName, msg['content'])
+    })
+  }
+
   function formatUpdates (storeName, content) {
     let contentDiv
     if (storeName === 'user') {
-      contentDiv = formatUserUpdate(content)
+      contentDiv = formatUserRow(content)
     } else if (storeName === 'tweet') {
-      contentDiv = formatTweetUpdate(content)
+      contentDiv = formatTweetRow(content)
     }
 
     let containerDiv
@@ -72,34 +90,26 @@
     } else if (content.status === 'available') {
       containerDiv = document.getElementById('available')
     }
+
     containerDiv.querySelector('.default').style.display = 'none'
     containerDiv.append(contentDiv)
   }
 
-  function getUpdates (storeName, fn) {
-    let port = window.browser.runtime.connect({'name': storeName})
-    port.postMessage()
-    port.onMessage.addListener(function (msg) {
-      fn(storeName, msg['content'])
-    })
-  }
-
-  function formatUserUpdate (content) {
+  function formatUserRow (content) {
     let contentDiv = document.createElement('div')
-    contentDiv.className = 'meta'
+    contentDiv.className = 'row-item'
     contentDiv.textContent = 'User '
     let contentLink = document.createElement('a')
     contentLink.href = 'https://twitter.com/' + content.screenName
     contentLink.setAttribute('target', '_blank')
-    contentLink.className = 'url'
     contentLink.textContent = '@' + content.screenName
     contentDiv.appendChild(contentLink)
     return contentDiv
   }
 
-  function formatTweetUpdate (content) {
+  function formatTweetRow (content) {
     let contentDiv = document.createElement('div')
-    contentDiv.className = 'meta'
+    contentDiv.className = 'row-item'
     let screenName = content.permalinkPath.split('/')[1]
     let contentLink = document.createElement('a')
     contentLink.href = 'https://twitter.com' + content.permalinkPath

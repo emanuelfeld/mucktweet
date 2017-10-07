@@ -1,7 +1,7 @@
 (function () {
   'use strict'
 
-  let DEBUG = false
+  const DEBUG = false
 
   if (!!window.chrome) {
     window.browser = window.chrome
@@ -27,25 +27,25 @@
   openDb()
 
   function handlePort (port) {
-    let tx = db.transaction([port.name], 'readwrite')
-    let store = tx.objectStore(port.name)
+    const tx = db.transaction([port.name], 'readwrite')
+    const store = tx.objectStore(port.name)
 
-    let modIndex = store.index('hasUpdate')
-    let modReq = modIndex.openCursor(IDBKeyRange.only(1))
+    const modIndex = store.index('hasUpdate')
+    const modReq = modIndex.openCursor(IDBKeyRange.only(1))
 
     modReq.onsuccess = function (evt) {
-      let cursor = evt.target.result
+      const cursor = evt.target.result
       if (cursor) {
         port.postMessage({'content': cursor.value})
         cursor.continue()
       }
     }
 
-    let unmodIndex = store.index('status')
-    let unmodReq = unmodIndex.openCursor(IDBKeyRange.only('available'))
+    const unmodIndex = store.index('status')
+    const unmodReq = unmodIndex.openCursor(IDBKeyRange.only('available'))
 
     unmodReq.onsuccess = function (evt) {
-      let cursor = evt.target.result
+      const cursor = evt.target.result
       if (cursor) {
         port.postMessage({'content': cursor.value})
         cursor.continue()
@@ -54,11 +54,12 @@
   }
 
   function handleMessage (request, sender, sendResponse) {
-    if (request.type === 'popup') {
-      let url = window.browser.extension.getURL('dashboard.html')
-      sendResponse({'content': url + '#' + request.content})
-    } else if (request.type === 'report') {
-      let content = request.content
+    const type = request.type
+    const content = request.content
+    if (type === 'popup') {
+      const url = window.browser.extension.getURL('dashboard.html')
+      sendResponse({'content': url + '#' + content})
+    } else if (type === 'report') {
       if (content.userData !== {}) {
         let entry = queryDb(content.userData['id'], DB_USER_STORE_NAME)
         if (entry === undefined) {
@@ -82,7 +83,7 @@
         }
       }
       updateStatus()
-    } else if (request.type === 'download') {
+    } else if (type === 'download') {
       downloadLocal(request.content)
     }
   }
@@ -93,7 +94,6 @@
       'mucktweetLastUpdate': 0
     }, function (res) {
       lastUpdate = res.mucktweetLastUpdate
-      console.log(lastUpdate)
       if (DEBUG === true || force === true ||
          lastUpdate === 0 || (timestampNow > lastUpdate + 8.64e+7)) {
         updateUserStatus()
@@ -133,11 +133,20 @@
   }
 
   function downloadData (content, filename) {
-    let dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(content, null, 4))
-    let dlAnchorElem = document.createElement('a')
-    dlAnchorElem.setAttribute('href', dataStr)
-    dlAnchorElem.setAttribute('download', filename + '.json')
-    dlAnchorElem.click()
+    let dataStr = 'data:text/json;charset=utf-8,' + 
+      encodeURIComponent(JSON.stringify(content, null, 4))
+    let tempAnchor = document.createElement('a')
+    tempAnchor.setAttribute('href', dataStr)
+    tempAnchor.setAttribute('download', filename + '.json')
+    tempAnchor.click()
+  }
+
+  function updateCursorStatus(cursor, newStatus, storeName) {
+    cursor.value.status = newStatus
+    cursor.value.hasUpdate = 1
+    cursor.value.updatDate = timestampNow
+    addToDb(cursor.value, storeName)
+    updateBadge(badgeCounter++)
   }
 
   function updateUserStatus () {
@@ -152,17 +161,9 @@
         fetch('https://twitter.com/intent/user?user_id=' + cursor.value.id)
             .then(function (res) {
               if (res.url === 'https://twitter.com/account/suspended') {
-                cursor.value.status = 'suspended'
-                cursor.value.hasUpdate = 1
-                cursor.value.updatDate = timestampNow
-                addToDb(cursor.value, DB_USER_STORE_NAME)
-                updateBadge(badgeCounter++)
+                updateCursorStatus(cursor, 'suspended', DB_USER_STORE_NAME)
               } else if (res.status === 404) {
-                cursor.value.status = 'deleted'
-                cursor.value.hasUpdate = 1
-                cursor.value.updatDate = timestampNow
-                addToDb(cursor.value, DB_USER_STORE_NAME)
-                updateBadge(badgeCounter++)
+                updateCursorStatus(cursor, 'deleted', DB_USER_STORE_NAME)
               }
             })
         cursor.continue()
@@ -187,11 +188,7 @@
         fetch('https://twitter.com' + cursor.value.permalinkPath)
               .then(function (res) {
                 if (res.status === 404) {
-                  cursor.value.status = 'deleted'
-                  cursor.value.hasUpdate = 1
-                  cursor.value.updatDate = timestampNow
-                  addToDb(cursor.value, DB_TWEET_STORE_NAME)
-                  updateBadge(badgeCounter++)
+                  updateCursorStatus(cursor, 'deleted', DB_TWEET_STORE_NAME)
                 }
               })
         cursor.continue()

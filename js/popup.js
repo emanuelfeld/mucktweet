@@ -12,7 +12,9 @@
       'type': 'popup',
       'content': evt.srcElement.id
     }, function (res) {
-      window.browser.tabs.update({'active': true, 'url': res.content})
+      window.browser.tabs.update({
+        'active': true, 
+        'url': res.content})
     })
   }
 })()
