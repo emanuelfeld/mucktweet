@@ -1,30 +1,32 @@
 (function () {
   'use strict'
 
+  window.addEventListener('hashchange', clickHashTab, false)
+
+  function clickHashTab () {
+    const sectionId = window.location.hash.split('#')[1]
+    document.querySelector('.menu-item.' + sectionId).click()
+  }
+
   window.onload = function () {
-    // let selectedMenuItem = document.querySelector('.menu-item[selected]')
-
-  document.onclick = function (evt) {
-    if (evt.srcElement.classList.contains('menu-item') && evt.srcElement.hasAttribute('selected') === false) {
-      let oldSelectedMenuItem = document.querySelector('.menu-item[selected]')
-      oldSelectedMenuItem.removeAttribute('selected')
-      let oldSectionClass = oldSelectedMenuItem.id.split('-')[1]
-      document.querySelector('div.' + oldSectionClass).style.display = 'none'
-
-      evt.srcElement.setAttribute('selected', '')
-      let sectionClass = evt.srcElement.id.split('-')[1]
-      document.querySelector('div.' + sectionClass).style.display = 'block'
-    } else if (evt.srcElement.id === 'user-data') {
-      window.browser.runtime.sendMessage({
-        'type': 'download', 
-        'content': 'user'})
-    } else if (evt.srcElement.id === 'tweet-data') {
-      window.browser.runtime.sendMessage({
-        'type': 'download', 
-        'content': 'tweet'})
-  
+    if (window.location.hash) {
+      clickHashTab()
     }
   }
-}
 
+  document.onclick = function (evt) {
+    let element = evt.srcElement
+    if (element.classList.contains('menu-item') && element.hasAttribute('selected') === false) {
+      let prevSelectedMenuItem = document.querySelector('.menu-item[selected]')
+      prevSelectedMenuItem.removeAttribute('selected')
+      let prevSectionClass = prevSelectedMenuItem.id.split('-')[1]
+      document.querySelector('section.' + prevSectionClass).style.display = 'none'
+
+      // select and show new section, set hash
+      element.setAttribute('selected', '')
+      let sectionClass = element.id.split('-')[1]
+      document.querySelector('section.' + sectionClass).style.display = 'block'
+      window.location.hash = '#' + sectionClass
+    }
+  }
 })()
