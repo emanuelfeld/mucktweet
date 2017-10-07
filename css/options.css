@@ -5,6 +5,15 @@ body {
   color: #333;
   width: 720px;
   margin: 0 auto;
+  padding: 15px;
+}
+
+body> :first-child {
+  margin-top: 0;
+}
+
+body> :last-child {
+  margin-bottom: 0;
 }
 
 a {
@@ -12,14 +21,30 @@ a {
   color: #08c;
 }
 
-header span[selected] {
-  background-color: #333;
-  color: white;
-}
-
 div {
   width: 720px;
   margin: 0 auto;
+}
+
+h1 {
+  font-weight: normal;
+  font-size: 25px;
+}
+
+header {
+  padding: 20px 0px 20px 0px;
+  border-bottom: 1px solid #333;
+  margin-bottom: 10px;
+}
+
+header h1 {
+  font-size: 3em;
+  padding-bottom: 10px;
+}
+
+.menu-item[selected] {
+  background-color: #333;
+  color: white;
 }
 
 .container {
@@ -27,11 +52,8 @@ div {
 }
 
 .report {
-  padding: 20px 0 20px 0;  
+  padding: 20px 0 20px 0;    
 }
-
-.body > :first-child { margin-top: 0; }
-.body > :last-child { margin-bottom: 0; }
 
 .meta {
   background: #f9f9f9;
@@ -39,26 +61,8 @@ div {
   padding: 8px 15px;
 }
 
-.body {
-  padding: 15px;
-}
-
-.body > :first-child { margin-top: 0; }
-.body > :last-child { margin-bottom: 0; }
-
-h1 {
-  font-weight: normal;
-  font-size: 25px;
-}
-
 #menu-bar {
   padding-bottom: 20px;
-}
-
-header {
-  padding: 20px 0px 20px 0px;
-  border-bottom: 1px solid #333;
-  margin-bottom: 20px;  
 }
 
 .menu-item {
@@ -66,20 +70,14 @@ header {
   border: 1px solid #333;
 }
 
+.menu-item:not([selected]):hover {
+  cursor: pointer;
+}
+
 #menu-donate {
   background-color: #7bc043;
   color: white;
   border: 1px solid #67a337;
-}
-
-.menu-item:not([selected]):hover {
-  cursor:pointer;
-}
-
-
-header h1 {
-  font-size: 3em;
-  padding-bottom: 10px;
 }
 
 .download-button {
@@ -90,22 +88,25 @@ header h1 {
 .download-button:hover {
   cursor: pointer;
 }
+
 .badge {
   padding: 3px 5px;
-  /*border-radius: 3px;*/
   background: #999;
   color: #fff;
-  /*font-weight: bold;*/
   margin-right: 10px;
   text-transform: capitalize;
-}
-
-.badge {
-    text-align: center;
+  text-align: center;
   width: 80px;
-
 }
 
-.available { background: #ee4035; }
-.suspended { background: #7bc043; }
-.deleted { background: #0392cf; }
+.available {
+  background: #ee4035;
+}
+
+.suspended {
+  background: #7bc043;
+}
+
+.deleted {
+  background: #0392cf;
+}

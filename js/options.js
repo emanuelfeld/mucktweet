@@ -1,7 +1,7 @@
 (function () {
   'use strict'
 
-  if (window.chrome) {
+  if (!!window.chrome) {
     window.browser = window.chrome
   } else {
     window.browser = browser
@@ -12,7 +12,6 @@
   localStorage.get({
     'mucktweetLastUpdate': 0
   }, function (res) {
-    console.log(res.mucktweetLastUpdate)
     let title = document.getElementById('title')
     title.textContent += ' ' + new Date(res.mucktweetLastUpdate).toJSON().slice(0, 10)
   })
@@ -23,7 +22,17 @@
       getUpdates('user', formatUpdates)
       getUpdates('tweet', formatUpdates)
     }
+    if (window.location.hash) {
+      clickHashTab()
+    }
   }
+
+  function clickHashTab () {
+    let menuId = 'menu-' + window.location.hash.split('#')[1]
+    document.getElementById(menuId).click()
+  }
+
+  window.addEventListener('hashchange', clickHashTab, false)
 
   document.onclick = function (evt) {
     if (evt.srcElement.classList.contains('menu-item') && evt.srcElement.hasAttribute('selected') === false) {
@@ -35,40 +44,40 @@
       evt.srcElement.setAttribute('selected', '')
       let sectionClass = evt.srcElement.id.split('-')[1]
       document.querySelector('div.' + sectionClass).style.display = 'block'
+      window.location.hash = '#' + sectionClass
     } else if (evt.srcElement.id === 'user-data') {
       window.browser.runtime.sendMessage({
-        'type': 'download', 
+        'type': 'download',
         'content': 'user'})
     } else if (evt.srcElement.id === 'tweet-data') {
       window.browser.runtime.sendMessage({
-        'type': 'download', 
+        'type': 'download',
         'content': 'tweet'})
-  
     }
   }
 
   function formatUpdates (storeName, content) {
-      let contentDiv
-      if (storeName === 'user') {
-        contentDiv = formatUserUpdate(content)
-      } else if (storeName === 'tweet') {
-        contentDiv = formatTweetUpdate(content)
-      }
+    let contentDiv
+    if (storeName === 'user') {
+      contentDiv = formatUserUpdate(content)
+    } else if (storeName === 'tweet') {
+      contentDiv = formatTweetUpdate(content)
+    }
 
-      let containerDiv
-      if (content.status === 'suspended') {
-        containerDiv = document.getElementById('suspended')
-      } else if (content.status === 'deleted') {
-        containerDiv = document.getElementById('deleted')
-      } else if (content.status === 'available') {
-        containerDiv = document.getElementById('available')
-      }
-      containerDiv.querySelector('.default').style.display = 'none'
-      containerDiv.append(contentDiv)
+    let containerDiv
+    if (content.status === 'suspended') {
+      containerDiv = document.getElementById('suspended')
+    } else if (content.status === 'deleted') {
+      containerDiv = document.getElementById('deleted')
+    } else if (content.status === 'available') {
+      containerDiv = document.getElementById('available')
+    }
+    containerDiv.querySelector('.default').style.display = 'none'
+    containerDiv.append(contentDiv)
   }
 
   function getUpdates (storeName, fn) {
-    let port = chrome.runtime.connect({'name': storeName})
+    let port = window.browser.runtime.connect({'name': storeName})
     port.postMessage()
     port.onMessage.addListener(function (msg) {
       fn(storeName, msg['content'])

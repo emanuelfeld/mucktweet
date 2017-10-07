@@ -3,7 +3,7 @@
 
   let DEBUG = false
 
-  if (window.chrome) {
+  if (!!window.chrome) {
     window.browser = window.chrome
   } else {
     window.browser = browser
@@ -21,12 +21,12 @@
   let localStorage = window.browser.storage.local
   let badgeCounter = 0
 
-  window.browser.runtime.onMessage.addListener(handleReport)
-  window.browser.runtime.onConnect.addListener(handleDashboard)
+  window.browser.runtime.onMessage.addListener(handleMessage)
+  window.browser.runtime.onConnect.addListener(handlePort)
 
   openDb()
 
-  function handleDashboard (port) {
+  function handlePort (port) {
     let tx = db.transaction([port.name], 'readwrite')
     let store = tx.objectStore(port.name)
 
@@ -53,41 +53,47 @@
     }
   }
 
-  function handleReport (request, sender, sendResponse) {
-    if (request.type === 'report') {
-    let content = request.content
-    if (content.userData !== {}) {
-      let entry = queryDb(content.userData['id'], DB_USER_STORE_NAME)
-      if (entry === undefined) {
-        console.log('Adding user.')
-        entry = content.userData
-      } else {
-        console.warn('User already reported. Updating.')
-        entry['userReportCount']++
-        entry['hasUpdate'] = 0
+  function handleMessage (request, sender, sendResponse) {
+    if (request.type === 'popup') {
+      let url = window.browser.extension.getURL('dashboard.html')
+      sendResponse({'content': url + '#' + request.content})
+    } else if (request.type === 'report') {
+      let content = request.content
+      if (content.userData !== {}) {
+        let entry = queryDb(content.userData['id'], DB_USER_STORE_NAME)
+        if (entry === undefined) {
+          console.log('Adding user.')
+          entry = content.userData
+        } else {
+          console.warn('User already reported. Updating.')
+          entry['userReportCount']++
+          entry['hasUpdate'] = 0
+        }
+        addToDb(entry, DB_USER_STORE_NAME)
       }
-      addToDb(entry, DB_USER_STORE_NAME)
-    }
 
-    if (content.tweetData !== {}) {
-      let entry = queryDb(content.tweetData['id'], DB_TWEET_STORE_NAME)
-      if (entry === undefined) {
-        console.log('Adding tweet.')
-        addToDb(content.tweetData, DB_TWEET_STORE_NAME)
-      } else {
-        console.warn('Tweet already reported.')
+      if (content.tweetData !== {}) {
+        let entry = queryDb(content.tweetData['id'], DB_TWEET_STORE_NAME)
+        if (entry === undefined) {
+          console.log('Adding tweet.')
+          addToDb(content.tweetData, DB_TWEET_STORE_NAME)
+        } else {
+          console.warn('Tweet already reported.')
+        }
       }
+      updateStatus()
+    } else if (request.type === 'download') {
+      downloadLocal(request.content)
     }
-  } else if (request.type === 'download') {
-    downloadLocal(request.content)
   }
-}
+
   function updateStatus (force = false) {
     console.log('updating badge')
     localStorage.get({
       'mucktweetLastUpdate': 0
     }, function (res) {
       lastUpdate = res.mucktweetLastUpdate
+      console.log(lastUpdate)
       if (DEBUG === true || force === true ||
          lastUpdate === 0 || (timestampNow > lastUpdate + 8.64e+7)) {
         updateUserStatus()
@@ -106,6 +112,32 @@
     window.browser.browserAction.setBadgeText({
       text: badgeCounter.toString()
     })
+  }
+
+  function downloadLocal (storeName) {
+    let tx = db.transaction(storeName, 'readonly')
+    let store = tx.objectStore(storeName)
+    let req = store.openCursor()
+    let out = []
+    req.onsuccess = function (evt) {
+      let cursor = evt.target.result
+      if (cursor) {
+        out.push(cursor.value)
+        cursor.continue()
+      }
+    }
+
+    tx.oncomplete = function () {
+      downloadData(out, storeName)
+    }
+  }
+
+  function downloadData (content, filename) {
+    let dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(content, null, 4))
+    let dlAnchorElem = document.createElement('a')
+    dlAnchorElem.setAttribute('href', dataStr)
+    dlAnchorElem.setAttribute('download', filename + '.json')
+    dlAnchorElem.click()
   }
 
   function updateUserStatus () {
@@ -142,32 +174,6 @@
     }
   }
 
-  function downloadLocal (storeName) {
-    let tx = db.transaction(storeName, 'readonly')
-    let store = tx.objectStore(storeName)
-    let req = store.openCursor()
-    let out = []
-    req.onsuccess = function (evt) {
-      let cursor = evt.target.result
-      if (cursor) {
-        out.push(cursor.value)
-        cursor.continue()
-      } 
-    }
-
-    tx.oncomplete = function () {
-      downloadData(out, storeName)
-    }
-  }
-
-  function downloadData (content, filename) {
-    let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(content, null, 4));
-    let dlAnchorElem = document.createElement('a')
-    dlAnchorElem.setAttribute("href", dataStr     )
-    dlAnchorElem.setAttribute("download", filename + ".json")
-    dlAnchorElem.click()
-  }
-
   function updateTweetStatus () {
     let tx = db.transaction(DB_TWEET_STORE_NAME, 'readwrite')
     let tweetStore = tx.objectStore(DB_TWEET_STORE_NAME)
@@ -191,7 +197,7 @@
         cursor.continue()
       } else if (cursor) {
         cursor.value.hasUpdate = 0
-        addToDb(cursor.value, DB_USER_STORE_NAME)
+        addToDb(cursor.value, DB_TWEET_STORE_NAME)
         cursor.continue()
       }
     }

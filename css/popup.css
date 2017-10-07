@@ -1,0 +1,25 @@
+body {
+  font-family: monospace;
+  line-height: 1.6em;
+  font-size: 15px;
+  color: #333;
+  margin: 0 auto;
+  width: 200px;
+}
+
+.meta {
+  background: #f9f9f9;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 8px 15px;
+}
+
+.meta:hover {
+  background: #eeecec;
+  cursor: pointer;
+}
+
+#donate {
+  background-color: #7bc043;
+  color: white;
+  border: 1px solid #67a337;  
+}

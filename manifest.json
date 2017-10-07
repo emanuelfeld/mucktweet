@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "MuckTweet",
-    "version": "0.0.1",
+    "version": "1",
     "author": "Emanuel Feld",
     "background": {
         "scripts": [
@@ -17,7 +17,6 @@
     ],
     "content_scripts": [
         {
-            "css": [],
             "js": [
                 "js/main.js"
             ],
@@ -31,10 +30,12 @@
     "permissions": [
         "https://*.twitter.com/*",
         "storage",
-        "contextMenus"
+        "contextMenus",
+        "tabs"
     ],
     "browser_action": {
-        "default_title": "MuckTweet"
+        "default_title": "MuckTweet",
+        "default_popup": "popup.html"
     },
     "offline_enabled": false
 }

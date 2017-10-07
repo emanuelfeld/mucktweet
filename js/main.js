@@ -1,7 +1,7 @@
 (function () {
   'use strict'
 
-  let DEBUG = true
+  let DEBUG = false
 
   if (window.chrome) {
     window.browser = window.chrome
@@ -20,7 +20,7 @@
       'status': 'suspended',
       'reportCount': 1,
       'reportDate': Date.now(),
-      'hasUpdate': 1,
+      'hasUpdate': 0,
       'updateDate': null
     }
   }
@@ -30,8 +30,8 @@
       'id': node.getAttribute('data-tweet-id'),
       'userId': node.getAttribute('data-user-id'),
       'permalinkPath': node.getAttribute('data-permalink-path'),
-      'status': 'available',
-      'postDate': parseInt(node.querySelector('.js-relative-timestamp').getAttribute('data-time-ms')),
+      'status': 'deleted',
+      'postDate': parseInt(node.querySelector('._timestamp').getAttribute('data-time-ms')),
       'reportDate': Date.now(),
       'hasUpdate': 0,
       'updateDate': null
@@ -44,6 +44,7 @@
         .style.display !== 'none' &&
       document.getElementById('report-dialog')
         .classList.contains('report-' + reportType)
+
     if (reportActive &&
         document.getElementById('report-dialog')
           .contains(node) &&
@@ -56,7 +57,14 @@
   }
 
   function submittedReport (node) {
-    return node.classList.contains('new-report-flow-done-button')
+    if ((document.getElementById('report-dialog') &&
+         document.getElementById('report-dialog').style.display === 'block') === false) {
+      return false
+    }
+
+    return node.classList.contains('add-text') ||
+           node.classList.contains('tweet-number') ||
+           node.classList.contains('new-report-flow-done-button')
   }
 
   function hasReportData () {
@@ -64,7 +72,18 @@
   }
 
   document.onclick = function (evt) {
-    if (beganReport(evt.srcElement, 'user')) {
+    console.log(evt)
+    console.log(evt.srcElement)
+    if ((DEBUG && hasReportData()) || submittedReport(evt.srcElement)) {
+      console.log('Submitting report.')
+      window.browser.runtime.sendMessage({
+        'type': 'report',
+        'content': {
+          'userData': userData,
+          'tweetData': tweetData
+        }
+      })
+    } else if (beganReport(evt.srcElement, 'user')) {
       const node = document.querySelector('.user-actions')
       userData = getUserData(node)
       console.log('Reporting user: ' + JSON.stringify(userData))
@@ -74,15 +93,6 @@
       console.log('Reporting user: ' + JSON.stringify(userData))
       tweetData = getTweetData(node)
       console.log('Reporting tweet: ' + JSON.stringify(tweetData))
-    } else if ((DEBUG && hasReportData()) || submittedReport(evt.srcElement)) {
-      console.log('Submitting report.')
-      window.browser.runtime.sendMessage({
-        'type': 'report',
-        'content': {
-          'userData': userData,
-          'tweetData': tweetData
-        }
-      })
     }
   }
 })()
