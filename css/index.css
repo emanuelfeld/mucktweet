@@ -5,6 +5,8 @@ body {
   color: #333;
   width: 720px;
   margin: 0 auto;
+  margin-bottom: 40px;
+  padding: 15px;
 }
 
 a {
@@ -39,9 +41,6 @@ div {
   padding: 8px 15px;
 }
 
-.body {
-  padding: 15px;
-}
 
 .body > :first-child { margin-top: 0; }
 .body > :last-child { margin-bottom: 0; }
