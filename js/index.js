@@ -6,29 +6,22 @@
   window.addEventListener('hashchange', clickHashTab, false)
 
   function clickHashTab () {
-    const sectionId = window.location.hash.split('#')[1]
-    document.querySelector('.menu-item.' + sectionId).click()
+    let oldMenuItem = document.querySelector('[selected="true"]')
+    oldMenuItem.setAttribute('selected', 'false')
+    let oldHash = oldMenuItem.id.split('-')[1]
+    let oldSection = document.querySelector('section.' + oldHash)
+    oldSection.style.display = 'none'
+
+    let newHash = window.location.hash.split('#')[1]
+    let newMenuItem = document.querySelector('.menu-item.' + newHash)
+    newMenuItem.setAttribute('selected', 'true')
+    let newSection = document.querySelector('section.' + newHash)
+    newSection.style.display = 'block'
   }
 
   window.addEventListener('load', function () {
     if (window.location.hash) {
       clickHashTab()
-    }    
-  })
-
-  document.addEventListener(touchEvent, function (evt) {
-    let element = evt.target
-    if (element.classList.contains('menu-item') && element.hasAttribute('selected') === false) {
-      let prevSelectedMenuItem = document.querySelector('.menu-item[selected]')
-      prevSelectedMenuItem.removeAttribute('selected')
-      let prevSectionClass = prevSelectedMenuItem.id.split('-')[1]
-      document.querySelector('section.' + prevSectionClass).style.display = 'none'
-
-      // select and show new section, set hash
-      element.setAttribute('selected', '')
-      let sectionClass = element.id.split('-')[1]
-      document.querySelector('section.' + sectionClass).style.display = 'block'
-      window.location.hash = '#' + sectionClass
     }    
   })
 })()

@@ -9,11 +9,11 @@
 <body class="body">
     <header>
         <h1 id="menu-title">MuckTweet</h1>
-        <div id="menu-bar">
-            <span id="menu-about" class="menu-item button about" selected>About</span>
-            <span id="menu-issues" class="menu-item button issues">Report Bugs</span>
-            <span id="menu-donate" class="menu-item button donate">Donate</span>
-        </div>
+        <!-- <div id="menu-bar"> -->
+            <a href="#about"><span id="menu-about" class="menu-item button about" selected="true">About</span></a>
+            <a href="#issues"><span id="menu-issues" class="menu-item button issues" selected="false">Report Bugs</span></a>
+            <a href="#donate"><span id="menu-donate" class="menu-item button donate" selected="false">Donate</span></a>
+        <!-- </div> -->
     </header>
     <section class="container about" style="display: block;">
         <p>It's 2017 and Twitter's Arab Spring euphoria is long over.</p>
@@ -30,16 +30,16 @@
 
         <p>You can contact <span style="text-decoration: underline;">mucktweet at gmail dot com</span> with questions.</p>
     </section>
+    <section class="container donate" style="display: none;">
+        <p>Buy us a cuppa tea<a></a>.</p>
+        <span class="button"><a href="https://paypal.me/efeld/10" target="_blank">PayPal &#8599;</a></span>
+    </section>
     <section class="container issues" style="display: none;">
         <p>Found a bug? You can send a report using <a href="https://goo.gl/forms/gq94rnt2jTLTZa4k2" target="_blank">this form</a> or create an issue in the <a href="https://github.com/emanuelfeld/mucktweet/issues" target="_blank">GitHub repository</a>.</p>
 
         <p>I'll do my best to resolve it in a timely manner. Keep in mind that MuckTweet is free. I'm not being paid to make or maintain it.</p> 
 
         <p>It would be really nice if you sent a donation.</p>
-    </section>
-    <section class="container donate" style="display: none;">
-        <p>Buy us a cuppa tea.</p>
-        <span class="button"><a href="https://paypal.me/efeld/10" target="_blank">PayPal</a></span>
     </section>
 </body>
 </html>

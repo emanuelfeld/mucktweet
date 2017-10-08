@@ -3,6 +3,7 @@
      margin: 0px;
      height: 100%;
      width: 100%;
+     /*min-width: 500px;*/
   }
 
   body {
@@ -29,11 +30,7 @@
   }
 
   header > h1 {
-    font-size:3em;
-  }
-
-  header > div {
-    padding-bottom:20px;
+    font-size:2.2em;
   }
 
   h1 {
@@ -51,7 +48,7 @@
     padding:20px 0;
   }
 
-  .menu-item[selected] {
+  .menu-item[selected='true'] {
     background-color:#333;
     color:#FFF;
   }
@@ -63,8 +60,11 @@
   }
 
   .button {
+    display: inline-block;
     border:1px solid #333;
-    padding:5px;
+    padding:10px;
+    margin:10px 0;
+    color:#333;
   }
 
   .button.donate {
