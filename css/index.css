@@ -1,99 +1,79 @@
-body {
-color:#333;
-font-family:monospace;
-font-size:15px;
-line-height:1.6em;
-margin:0 auto;
-padding:15px;
-width:720px;
-}
+@media all {
+  html {
+     margin: 0px;
+     height: 100%;
+     width: 100%;
+  }
 
-body> :first-child {
-margin-top:0;
-}
+  body {
+    color:#333;
+    font:16px/1.6 monospace;
+    line-height:1.6em;
+    margin:0 auto;
+    width:75%;
+  }
 
-body> :last-child {
-margin-bottom:0;
-}
+  body> :first-child {
+    margin-top:0;
+  }
 
-header {
-border-bottom:1px solid #333;
-margin-bottom:10px;
-padding:20px 0;
-}
+  body> :last-child {
+    margin-bottom:0;
+  }
 
-header > h1 {
-font-size:3em;
-padding-bottom:10px;
-}
+  header {
+    border-bottom:1px solid #333;
+    margin-bottom:10px;
+    padding:20px 0;
+    width: 100%;
+  }
 
-header > div {
-padding-bottom:20px;
-}
+  header > h1 {
+    font-size:3em;
+  }
 
-h1 {
-font-size:25px;
-font-weight:400;
-}
+  header > div {
+    padding-bottom:20px;
+  }
 
-div {
-margin:0 auto;
-width:720px;
-}
+  h1 {
+    line-height: 1.1;
+    font-size:28px;
+    font-weight:400;
+  }
 
-a {
-color:#08c;
-text-decoration:none;
-}
+  a {
+    color:#08c;
+    text-decoration:none;
+  }
 
-.container {
-padding:20px 0;
-}
+  .container {
+    padding:20px 0;
+  }
 
-.menu-item[selected] {
-background-color:#333;
-color:#FFF;
-}
+  .menu-item[selected] {
+    background-color:#333;
+    color:#FFF;
+  }
 
-.row-item {
-background:#f9f9f9;
-border-bottom:1px solid #e0e0e0;
-padding:8px 15px;
-}
+  .row-item {
+    background:#f9f9f9;
+    border-bottom:1px solid #e0e0e0;
+    padding:8px 15px;
+  }
 
-.button {
-border:1px solid #333;
-padding:5px;
-}
+  .button {
+    border:1px solid #333;
+    padding:5px;
+  }
 
-.button.donate {
-background-color:#7bc043;
-border:1px solid #67a337;
-color:#FFF;
-}
+  .button.donate {
+    background-color:#7bc043;
+    border:1px solid #67a337;
+    color:#FFF;
+  }
 
-.badge {
-background:#999;
-color:#fff;
-margin-right:10px;
-padding:3px 5px;
-text-align:center;
-text-transform:capitalize;
-width:80px;
-}
-
-.badge.available {
-background:#ee4035;
-}
-
-.badge.suspended {
-background:#7bc043;
-}
-
-.badge.deleted {
-background:#0392cf;
-}
-
-.menu-item:not([selected]):hover,.button:hover {
-cursor:pointer;
+  .menu-item:not([selected]):hover,.button:hover {
+    cursor:pointer;
+  }
 }
