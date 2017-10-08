@@ -9,17 +9,18 @@
 <body class="body">
     <header>
         <h1 id="menu-title">MuckTweet</h1>
-        <!-- <div id="menu-bar"> -->
             <a href="#about"><span id="menu-about" class="menu-item button about" selected="true">About</span></a>
-            <a href="https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk" onclick="trackOutboundLink('https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk')" target="_blank"><span id="menu-chrome" class="button chrome" selected="false">Download</span></a>
+            <a href="https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk" onclick="trackOutboundLink('https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk'); return false;"><span id="menu-chrome" class="button chrome" selected="false">Download</span></a>
             <a href="#issues"><span id="menu-issues" class="menu-item button issues" selected="false">Report Bugs</span></a>
+            <a href="https://twitter.com/share?url=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fmucktweet%2Fdjckflgmaallfimdmmgalachmkaledhk&text=MuckTweet%20is%20a%20Chrome%20extension%20that%20helps%20users%20keep%20on%20top%20of%20Twitter%20abuse.">
+            <span id="menu-share" class="button share" selected="false">Share</span>
+            </a>
             <a href="#donate"><span id="menu-donate" class="menu-item button donate" selected="false">Donate</span></a>
-        <!-- </div> -->
     </header>
     <section class="container about" style="display: block;">
         <p>It's 2017 and Twitter's Arab Spring euphoria is long over.</p>
 
-        <p>We've traded <a href="https://en.wikipedia.org/wiki/Gamergate_controversy#Harassment_and_Twitter" onclick="trackOutboundLink('https://en.wikipedia.org/wiki/Gamergate_controversy#Harassment_and_Twitter')" target="_blank">Gamergate</a> for <a href="https://en.wikipedia.org/wiki/Pizzagate_conspiracy_theory" onclick="trackOutboundLink('https://en.wikipedia.org/wiki/Pizzagate_conspiracy_theory')" target="_blank">Pizzagate</a>. Trump uses his account as a literal <a href="https://www.nytimes.com/2016/12/08/us/politics/donald-trump-twitter-carrier-chuck-jones.html" onclick="trackOutboundLink('https://www.nytimes.com/2016/12/08/us/politics/donald-trump-twitter-carrier-chuck-jones.html')" target="_blank">bully pulpit</a>. Journalists <a href="https://newrepublic.com/article/134534/told-truth-donald-trump-rally-trolls-threatened-life" onclick="trackOutboundLink('https://newrepublic.com/article/134534/told-truth-donald-trump-rally-trolls-threatened-life')" target="_blank">receive death threats</a> in 140 characters (well, now 280). Leslie Jones has been forced to perform double duty as a <a href="https://www.thecut.com/2016/08/a-timeline-of-leslie-joness-horrific-online-abuse.html" onclick="trackOutboundLink('https://www.thecut.com/2016/08/a-timeline-of-leslie-joness-horrific-online-abuse.html')" target="_blank">troll buster</a>. And even Twitter co-founder <a href="https://twitter.com/biz/status/913992534157750272" onclick="trackOutboundLink('https://twitter.com/biz/status/913992534157750272')" target="_blank">Biz Stone struggles</a> to get neo-Nazis booted.</p>
+        <p>We've traded <a href="https://en.wikipedia.org/wiki/Gamergate_controversy#Harassment_and_Twitter" onclick="trackOutboundLink('https://en.wikipedia.org/wiki/Gamergate_controversy#Harassment_and_Twitter'); return false;">Gamergate</a> for <a href="https://en.wikipedia.org/wiki/Pizzagate_conspiracy_theory" onclick="trackOutboundLink('https://en.wikipedia.org/wiki/Pizzagate_conspiracy_theory'); return false;">Pizzagate</a>. Trump uses his account as a literal <a href="https://www.nytimes.com/2016/12/08/us/politics/donald-trump-twitter-carrier-chuck-jones.html" onclick="trackOutboundLink('https://www.nytimes.com/2016/12/08/us/politics/donald-trump-twitter-carrier-chuck-jones.html'); return false;">bully pulpit</a>. Journalists <a href="https://newrepublic.com/article/134534/told-truth-donald-trump-rally-trolls-threatened-life" onclick="trackOutboundLink('https://newrepublic.com/article/134534/told-truth-donald-trump-rally-trolls-threatened-life'); return false;">receive death threats</a> in 140 characters (well, now 280). Leslie Jones has been forced to perform double duty as a <a href="https://www.thecut.com/2016/08/a-timeline-of-leslie-joness-horrific-online-abuse.html" onclick="trackOutboundLink('https://www.thecut.com/2016/08/a-timeline-of-leslie-joness-horrific-online-abuse.html'); return false;">troll buster</a>. And even Twitter co-founder <a href="https://twitter.com/biz/status/913992534157750272" onclick="trackOutboundLink('https://twitter.com/biz/status/913992534157750272'); return false;">Biz Stone struggles</a> to get neo-Nazis booted.</p>
 
         <p>For those of us without millions of followers, relief can seem more elusive still.</p>
 
@@ -27,16 +28,16 @@
 
         <p><strong>MuckTweet</strong> helps keep you in the loop.</p>
 
-        <p>Whenever you report a user or tweet on <a href="https://twitter.com" onclick="trackOutboundLink('https://twitter.com')" target="_blank">Twitter.com</a>, the MuckTweet browser extension makes a record. It then automatically checks the site for updates on that report&mdash;no extra work needed on your part. All information is stored locally on your computer and is never sent elsewhere.</p>
+        <p>Whenever you report a user or tweet on <a href="https://twitter.com" onclick="trackOutboundLink('https://twitter.com'); return false;">Twitter.com</a>, the MuckTweet browser extension makes a record. It then automatically checks the site for updates on that report&mdash;no extra work needed on your part. All information is stored locally on your computer and is never sent elsewhere.</p>
 
         <p>You can contact <span style="text-decoration: underline;">mucktweet at gmail dot com</span> with questions.</p>
     </section>
     <section class="container donate" style="display: none;">
         <p>Buy us a cuppa tea<a></a>.</p>
-        <span class="button"><a href="https://paypal.me/efeld/10" onclick="trackOutboundLink('https://paypal.me/efeld/10')" target="_blank">PayPal &#8599;</a></span>
+        <span class="button"><a href="https://paypal.me/efeld/10" onclick="trackOutboundLink('https://paypal.me/efeld/10'); return false;">PayPal &#8599;</a></span>
     </section>
     <section class="container issues" style="display: none;">
-        <p>Found a bug? You can send a report using <a href="https://goo.gl/forms/gq94rnt2jTLTZa4k2" onclick="trackOutboundLink('https://goo.gl/forms/gq94rnt2jTLTZa4k2')" target="_blank">this form</a> or create an issue in the <a href="https://github.com/emanuelfeld/mucktweet/issues" onclick="trackOutboundLink('https://github.com/emanuelfeld/mucktweet/issues')" target="_blank">GitHub repository</a>.</p>
+        <p>Found a bug? You can send a report using <a href="https://goo.gl/forms/gq94rnt2jTLTZa4k2" onclick="trackOutboundLink('https://goo.gl/forms/gq94rnt2jTLTZa4k2'); return false;">this form</a> or create an issue in the <a href="https://github.com/emanuelfeld/mucktweet/issues" onclick="trackOutboundLink('https://github.com/emanuelfeld/mucktweet/issues'); return false;">GitHub repository</a>.</p>
 
         <p>I'll do my best to resolve it in a timely manner. Keep in mind that MuckTweet is free. I'm not being paid to make or maintain it.</p> 
 

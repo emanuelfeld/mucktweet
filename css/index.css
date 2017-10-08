@@ -74,6 +74,12 @@
     color:#FFF;
   }
 
+  .button.share {
+    background-color: #0392cf;
+    border: 1px solid #005d84;
+    color:#FFF;
+  }
+
   .button:hover {
     cursor:pointer;
   }
