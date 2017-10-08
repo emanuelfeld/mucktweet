@@ -39,7 +39,7 @@
   }
 
   document.onclick = function (evt) {
-    let element = evt.srcElement
+    let element = evt.target
     if (element.classList.contains('menu-item') && element.hasAttribute('selected') === false) {
       console.log('Migrating to new section.')
       let prevSelectedMenuItem = document.querySelector('.menu-item[selected]')
@@ -52,12 +52,12 @@
       let sectionClass = element.id.split('-')[1]
       document.querySelector('section.' + sectionClass).style.display = 'block'
       window.location.hash = '#' + sectionClass
-    } else if (evt.srcElement.id === 'user-data') {
+    } else if (evt.target.id === 'user-data') {
       console.log('Requesting user data download.')
       window.browser.runtime.sendMessage({
         'type': 'download',
         'content': 'user'})
-    } else if (evt.srcElement.id === 'tweet-data') {
+    } else if (evt.target.id === 'tweet-data') {
       console.log('Requesting tweet data download.')
       window.browser.runtime.sendMessage({
         'type': 'download',

@@ -10,10 +10,10 @@
   document.onclick = function (evt) {
     window.browser.runtime.sendMessage({
       'type': 'popup',
-      'content': evt.srcElement.id
+      'content': evt.target.id
     }, function (res) {
       window.browser.tabs.update({
-        'active': true, 
+        'active': true,
         'url': res.content})
     })
   }

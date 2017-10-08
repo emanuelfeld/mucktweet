@@ -14,7 +14,6 @@
   const DB_USER_STORE_NAME = 'user'
   const DB_TWEET_STORE_NAME = 'tweet'
 
-  const timestampNow = Date.now()
   let lastUpdate
 
   let db
@@ -24,8 +23,8 @@
   window.browser.runtime.onInstalled.addListener(function () {
     const url = window.browser.extension.getURL('dashboard.html')
     window.browser.tabs.update({
-      'active': true, 
-      'url': url + '#about'})  
+      'active': true,
+      'url': url + '#about'})
   })
   window.browser.runtime.onMessage.addListener(handleMessage)
   window.browser.runtime.onConnect.addListener(handlePort)
@@ -88,6 +87,7 @@
           console.warn('Tweet already reported.')
         }
       }
+      sendResponse({'content': 'ok'})
       updateStatus()
     } else if (type === 'download') {
       downloadLocal(request.content)
@@ -95,19 +95,18 @@
   }
 
   function updateStatus (force = false) {
-    console.log('updating badge')
     localStorage.get({
       'mucktweetLastUpdate': 0
     }, function (res) {
       lastUpdate = res.mucktweetLastUpdate
       if (DEBUG === true || force === true ||
-         lastUpdate === 0 || (timestampNow > lastUpdate + 8.64e+7)) {
-        updateUserStatus()
+         lastUpdate === 0 || (Date.now() > lastUpdate + 100000)) {
         updateTweetStatus()
+        updateUserStatus()
+        localStorage.set({
+          'mucktweetLastUpdate': Date.now()
+        })
       }
-      localStorage.set({
-        'mucktweetLastUpdate': timestampNow
-      })
     })
   }
 
@@ -139,7 +138,7 @@
   }
 
   function downloadData (content, filename) {
-    let dataStr = 'data:text/json;charset=utf-8,' + 
+    let dataStr = 'data:text/json;charset=utf-8,' +
       encodeURIComponent(JSON.stringify(content, null, 4))
     let tempAnchor = document.createElement('a')
     tempAnchor.setAttribute('href', dataStr)
@@ -147,11 +146,11 @@
     tempAnchor.click()
   }
 
-  function updateCursorStatus(cursor, newStatus, storeName) {
-    cursor.value.status = newStatus
-    cursor.value.hasUpdate = 1
-    cursor.value.updatDate = timestampNow
-    addToDb(cursor.value, storeName)
+  function updateCursorStatus (value, newStatus, storeName) {
+    value.status = newStatus
+    value.hasUpdate = 1
+    value.updateDate = Date.now()
+    addToDb(value, storeName)
     updateBadge(badgeCounter++)
   }
 
@@ -162,21 +161,24 @@
     let userReq = userIndex.openCursor()
 
     userReq.onsuccess = function (evt) {
-      let cursor = evt.target.result
-      if (cursor && cursor.value.reportDate > lastUpdate) {
-        fetch('https://twitter.com/intent/user?user_id=' + cursor.value.id)
+      let userCursor = evt.target.result
+      if (userCursor && userCursor.value.updateDate === null) {
+        let value = userCursor.value
+        fetch('https://twitter.com/intent/user?user_id=' + value.id)
             .then(function (res) {
               if (res.url === 'https://twitter.com/account/suspended') {
-                updateCursorStatus(cursor, 'suspended', DB_USER_STORE_NAME)
+                console.log('suspended!!!')
+                updateCursorStatus(value, 'suspended', DB_USER_STORE_NAME)
               } else if (res.status === 404) {
-                updateCursorStatus(cursor, 'deleted', DB_USER_STORE_NAME)
+                updateCursorStatus(value, 'deleted', DB_USER_STORE_NAME)
               }
             })
-        cursor.continue()
-      } else if (cursor) {
-        cursor.value.hasUpdate = 0
-        addToDb(cursor.value, DB_USER_STORE_NAME)
-        cursor.continue()
+        userCursor.continue()
+      } else if (userCursor) {
+        let value = userCursor.value
+        value.hasUpdate = 0
+        addToDb(value, DB_USER_STORE_NAME)
+        userCursor.continue()
       }
     }
   }
@@ -185,23 +187,25 @@
     let tx = db.transaction(DB_TWEET_STORE_NAME, 'readwrite')
     let tweetStore = tx.objectStore(DB_TWEET_STORE_NAME)
     let tweetIndex = tweetStore.index('status')
-    let tweetReq = tweetIndex.openCursor()
+    let tweetReq = tweetIndex.openCursor('available')
 
     tweetReq.onsuccess = function (evt) {
-      console.log('tweetReq success')
-      let cursor = evt.target.result
-      if (cursor && cursor.value.reportDate > lastUpdate) {
-        fetch('https://twitter.com' + cursor.value.permalinkPath)
-              .then(function (res) {
-                if (res.status === 404) {
-                  updateCursorStatus(cursor, 'deleted', DB_TWEET_STORE_NAME)
-                }
-              })
-        cursor.continue()
-      } else if (cursor) {
-        cursor.value.hasUpdate = 0
-        addToDb(cursor.value, DB_TWEET_STORE_NAME)
-        cursor.continue()
+      let tweetCursor = evt.target.result
+      if (tweetCursor && tweetCursor.value.updateDate === null) {
+        let value = tweetCursor.value
+        fetch('https://twitter.com' + value.permalinkPath)
+          .then(function (res) {
+            if (res.status === 404) {
+              updateCursorStatus(value, 'deleted', DB_TWEET_STORE_NAME)
+            }
+          })
+        tweetCursor.continue()
+      } else if (tweetCursor) {
+        console.log(tweetCursor.updateDate)
+        let value = tweetCursor.value
+        value.hasUpdate = 0
+        addToDb(value, DB_TWEET_STORE_NAME)
+        tweetCursor.continue()
       }
     }
   }
@@ -245,22 +249,22 @@
   }
 
   function addToDb (entry, storeName) {
-    console.log('Adding ID ' + entry['id'] + ' to ' + storeName + '.')
+    console.log('Adding ID ' + entry['id'] + ' to ' + storeName + ' store.')
     let store = getObjectStore(storeName, 'readwrite')
     let req = store.put(entry)
 
     req.onsuccess = function (evt) {
-      console.log('Successfully added ID ' + entry['id'] + ' to ' + storeName + '.')
+      console.log('Successfully added ID ' + entry['id'] + ' to ' + storeName + ' store.')
     }
 
     req.onerror = function (evt) {
-      console.error('Failed to add ID ' + entry['id'] + ' to ' + storeName + '.')
+      console.error('Failed to add ID ' + entry['id'] + ' to ' + storeName + ' store.')
       console.error(this.error)
     }
   }
 
   function queryDb (key, storeName) {
-    console.log('Querying ' + storeName + ' for ID ' + key + '.')
+    console.log('Querying ' + storeName + ' store for ID ' + key + '.')
     let store = getObjectStore(storeName, 'readwrite')
     let req = store.get(key)
 
@@ -269,7 +273,7 @@
     }
 
     req.onerror = function (evt) {
-      console.error('Failed to query ' + storeName + ' for ID ' + key + '.')
+      console.error('Failed to query ' + storeName + ' store for ID ' + key + '.')
       console.error(this.error)
     }
   }

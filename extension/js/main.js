@@ -18,7 +18,7 @@
       'id': node.getAttribute('data-user-id'),
       'screenName': node.getAttribute('data-screen-name'),
       'name': node.getAttribute('data-name'),
-      'status': 'suspended',
+      'status': 'available',
       'reportCount': 1,
       'reportDate': Date.now(),
       'hasUpdate': 0,
@@ -32,7 +32,7 @@
       'id': node.getAttribute('data-tweet-id'),
       'userId': node.getAttribute('data-user-id'),
       'permalinkPath': node.getAttribute('data-permalink-path'),
-      'status': 'deleted',
+      'status': 'available',
       'postDate': parseInt(node.querySelector('._timestamp').getAttribute('data-time-ms')),
       'reportDate': Date.now(),
       'hasUpdate': 0,
@@ -75,8 +75,8 @@
   }
 
   document.onclick = function (evt) {
-    console.log('Clicked', evt.srcElement)
-    if ((DEBUG && hasReportData()) || submittedReport(evt.srcElement)) {
+    console.log('Clicked', evt.target)
+    if ((DEBUG && hasReportData()) || submittedReport(evt.target)) {
       console.log('Submitting report.')
       console.log('Submitting user report: ' + JSON.stringify(userData))
       console.log('Submitting tweet report: ' + JSON.stringify(tweetData))
@@ -87,19 +87,24 @@
           'tweetData': tweetData
         }
       }, function (res) {
+        console.log(res)
         userData = {}
         tweetData = {}
       })
-    } else if (beganReport(evt.srcElement, 'user')) {
+    } else if (beganReport(evt.target, 'user')) {
       const node = document.querySelector('.user-actions')
-      userData = getUserData(node)
-      console.log('Beginning user report: ' + JSON.stringify(userData))
-    } else if (beganReport(evt.srcElement, 'tweet')) {
-      const node = evt.srcElement.closest('.tweet')
-      userData = getUserData(node)
-      console.log('Beginning user report: ' + JSON.stringify(userData))
-      tweetData = getTweetData(node)
-      console.log('Beginning tweet report: ' + JSON.stringify(tweetData))
+      if (node) {
+        userData = getUserData(node)
+        console.log('Beginning user report: ' + JSON.stringify(userData))
+      }
+    } else if (beganReport(evt.target, 'tweet')) {
+      const node = evt.target.closest('.tweet')
+      if (node) {
+        userData = getUserData(node)
+        console.log('Beginning user report: ' + JSON.stringify(userData))
+        tweetData = getTweetData(node)
+        console.log('Beginning tweet report: ' + JSON.stringify(tweetData))
+      }
     }
   }
 })()
