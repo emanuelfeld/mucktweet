@@ -8,13 +8,13 @@
     document.querySelector('.menu-item.' + sectionId).click()
   }
 
-  window.onload = function () {
+  window.addEventListener('load', function () {
     if (window.location.hash) {
       clickHashTab()
-    }
-  }
+    }    
+  })
 
-  document.onclick = function (evt) {
+  document.addEventListener('click', function (evt) {
     let element = evt.srcElement
     if (element.classList.contains('menu-item') && element.hasAttribute('selected') === false) {
       let prevSelectedMenuItem = document.querySelector('.menu-item[selected]')
@@ -27,6 +27,6 @@
       let sectionClass = element.id.split('-')[1]
       document.querySelector('section.' + sectionClass).style.display = 'block'
       window.location.hash = '#' + sectionClass
-    }
-  }
+    }    
+  })
 })()
