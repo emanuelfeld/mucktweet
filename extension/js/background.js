@@ -100,7 +100,7 @@
     }, function (res) {
       lastUpdate = res.mucktweetLastUpdate
       if (DEBUG === true || force === true ||
-         lastUpdate === 0 || (Date.now() > lastUpdate + 100000)) {
+         lastUpdate === 0 || (Date.now() > lastUpdate + 8.64e+7)) {
         updateTweetStatus()
         updateUserStatus()
         localStorage.set({
