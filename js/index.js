@@ -15,7 +15,7 @@
   })
 
   document.addEventListener('click', function (evt) {
-    let element = evt.srcElement
+    let element = evt.target
     if (element.classList.contains('menu-item') && element.hasAttribute('selected') === false) {
       let prevSelectedMenuItem = document.querySelector('.menu-item[selected]')
       prevSelectedMenuItem.removeAttribute('selected')
