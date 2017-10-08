@@ -29,8 +29,9 @@
     width: 100%;
   }
 
-  header > h1 {
+  #menu-title {
     font-size:2.2em;
+    margin-bottom: 15px;
   }
 
   h1 {
