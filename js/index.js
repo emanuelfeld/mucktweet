@@ -45,10 +45,10 @@ var trackOutboundLink = function (url) {
     ga('send', 'event', 'outbound', 'click', url, {
       'transport': 'beacon',
       'hitCallback': function () {
-        window.open(url)
+        window.location = url
       }
     })
   } else {
-    window.open(url)
+    window.location = url
   }
 }
