@@ -1,6 +1,8 @@
 (function () {
   'use strict'
 
+  let touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click'
+
   window.addEventListener('hashchange', clickHashTab, false)
 
   function clickHashTab () {
@@ -14,7 +16,7 @@
     }    
   })
 
-  document.addEventListener('click', function (evt) {
+  document.addEventListener(touchEvent, function (evt) {
     let element = evt.target
     if (element.classList.contains('menu-item') && element.hasAttribute('selected') === false) {
       let prevSelectedMenuItem = document.querySelector('.menu-item[selected]')
