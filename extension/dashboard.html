@@ -2,18 +2,19 @@
 <html lang="en">
 <head>
     <title>MuckTweet</title>
-    <script src="js/options.js"></script>
-    <link href="css/options.css" rel="stylesheet" type="text/css">
+    <script src="js/dashboard.js"></script>
+    <link href="css/dashboard.css" rel="stylesheet" type="text/css">
 </head>
 <body class="body">
     <header>
         <h1 id="menu-title">MuckTweet</h1>
         <div id="menu-bar">
-            <span id="menu-updates" class="menu-item button updates" selected>Dashboard</span>
-            <span id="menu-about" class="menu-item button about">About</span>
-            <span id="menu-issues" class="menu-item button issues">Report Bugs</span>
-            <span id="menu-download" class="menu-item button download">Download Data</span>
-            <span id="menu-donate" class="menu-item button donate">Donate</span>
+            <a href="#updates"><span class="menu-item button updates" selected="true">Recently</span></a>
+            <a href="#statistics"><span class="menu-item button statistics" selected="false">Statistics</span></a>
+            <a href="#download"><span class="menu-item button download" selected="false">Download Data</span></a>
+            <a href="#issues"><span class="menu-item button issues" selected="false">Report Bugs</span></a>
+            <a href="#about"><span class="menu-item button about" selected="false">About</span></a>
+            <a href="#donate"><span class="menu-item button donate" selected="false">Donate</span></a>
         </div>
     </header>
     <section class="container updates" style="display: block;">
@@ -37,6 +38,15 @@
             </div>
         </div>
     </section>
+    <section class="container statistics" style="display: none;">
+        <h1>Users</h1>
+        <span id='user-reported-stats'></span>
+        <span id='user-suspended-stats'></span>
+        <span id='user-deleted-stats'></span>
+        <h1>Tweets</h1>
+        <span id='tweet-reported-stats'></span>
+        <span id='tweet-deleted-stats'></span>
+    </section>
     <section class="container about" style="display: none;">
         <p>It's 2017 and Twitter's Arab Spring euphoria is long over.</p>
 
@@ -51,6 +61,7 @@
         <p>Whenever you report a user or tweet on <a href="https://twitter.com" target="_blank">Twitter.com</a>, the MuckTweet browser extension makes a record. It then automatically checks the site for updates on that report&mdash;no extra work needed on your part. All information is stored locally on your computer and is never sent elsewhere.</p>
 
         <p>You can contact <span style="text-decoration: underline;">mucktweet at gmail dot com</span> with questions.</p>
+        <!-- <h1>Frequently Asked Questions</h1> -->
     </section>
     <section class="container issues" style="display: none;">
         <p>Found a bug? You can send a report using <a href="https://goo.gl/forms/gq94rnt2jTLTZa4k2" target="_blank">this form</a> or create an issue in the <a href="https://github.com/emanuelfeld/mucktweet/issues" target="_blank">GitHub repository</a>.</p>

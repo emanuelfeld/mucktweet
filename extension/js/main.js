@@ -1,7 +1,7 @@
 (function () {
   'use strict'
 
-  const DEBUG = true
+  const DEBUG = false
 
   if (!!window.chrome) {
     window.browser = window.chrome
@@ -41,7 +41,7 @@
   }
 
   function beganReport (node, reportType) {
-    const reportActive = document.getElementById('report-dialog') !== null &&
+    let reportActive = document.getElementById('report-dialog') !== null &&
       document.getElementById('report-dialog')
         .style.display !== 'none' &&
       document.getElementById('report-dialog')
@@ -87,18 +87,18 @@
           'tweetData': tweetData
         }
       }, function (res) {
-        console.log(res)
         userData = {}
         tweetData = {}
+        window.browser.runtime.sendMessage({'type': 'update'})
       })
     } else if (beganReport(evt.target, 'user')) {
-      const node = document.querySelector('.user-actions')
+      let node = document.querySelector('.user-actions')
       if (node) {
         userData = getUserData(node)
         console.log('Beginning user report: ' + JSON.stringify(userData))
       }
     } else if (beganReport(evt.target, 'tweet')) {
-      const node = evt.target.closest('.tweet')
+      let node = evt.target.closest('.tweet')
       if (node) {
         userData = getUserData(node)
         console.log('Beginning user report: ' + JSON.stringify(userData))

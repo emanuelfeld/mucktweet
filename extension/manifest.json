@@ -14,7 +14,7 @@
         "popup.html",
         "about.html",
         "js/main.js",
-        "js/options.js"
+        "js/dashboard.js"
     ],
     "icons": { 
         "16": "img/icon16.png",
