@@ -44,7 +44,7 @@
   }
 
   function resetLocalStorage () {
-    console.log('calling reset locale storage')
+    console.log('Calling reset locale storage')
     localStorage.set({
     'recentUpdates': '[]',
     'lastUpdate': Date.now(),
@@ -145,12 +145,12 @@
   }
 
   function addToDb (entry, storeName) {
-    // console.log('Adding ID ' + entry['id'] + ' to ' + storeName + ' store.')
+    console.log('Adding ID ' + entry['id'] + ' to ' + storeName + ' store.')
     let store = getObjectStore(storeName, 'readwrite')
     let req = store.put(entry)
 
     req.onsuccess = function (evt) {
-      // console.log('Successfully added ID ' + entry['id'] + ' to ' + storeName + ' store.')
+      console.log('Successfully added ID ' + entry['id'] + ' to ' + storeName + ' store.')
     }
 
     req.onerror = function (evt) {
@@ -216,7 +216,7 @@
   // UI functions
 
   function updateBadge () {
-    // console.log('updating badge', badgeCounter)
+    console.log('Updating badge to ', badgeCounter)
     window.browser.browserAction.setBadgeText({
       text: badgeCounter.toString()
     })
@@ -238,7 +238,8 @@
       if (entry === undefined) {
         console.log('Adding user.', content, entry)
         totalStatistics[DB_USER_STORE_NAME]['reported']++
-        localStorage.set({'totalStatistics': JSON.stringify(totalStatistics)})
+        localStorage.set({
+          'totalStatistics': JSON.stringify(totalStatistics)})
         addToDb(content.userData, DB_USER_STORE_NAME)
       } else {
         console.warn('User already reported. Updating.')
@@ -253,7 +254,8 @@
         console.log('Adding tweet.', content, entry)
         addToDb(content.tweetData, DB_TWEET_STORE_NAME)
         totalStatistics[DB_TWEET_STORE_NAME]['reported']++
-        localStorage.set({'totalStatistics': JSON.stringify(totalStatistics)})
+        localStorage.set({
+          'totalStatistics': JSON.stringify(totalStatistics)})
       } else {
         console.warn('Tweet already reported.')
       }      
@@ -311,7 +313,7 @@
         fetch('https://twitter.com/intent/user?user_id=' + value.id)
             .then(function (res) {
               console.log(res)
-              if (res.url === 'https://twitter.com/account/suspended') {
+              if (res.url === 'https://twitter.com/account/suspended' || DEBUG) {
                 updateItemInStore(value, 'suspended', DB_USER_STORE_NAME)
               } else if (res.status === 404) {
                 updateItemInStore(value, 'deleted', DB_USER_STORE_NAME)

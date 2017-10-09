@@ -107,7 +107,7 @@
 
   document.addEventListener('click', function (evt) {
     if (evt.target.id === 'user-data' || evt.target.id === 'tweet-data') {
-      let storeName = evt.target.id.split('-')[1]
+      let storeName = evt.target.id.split('-')[0]
       console.log('Requesting ' + storeName + ' data download.')
       window.browser.runtime.sendMessage({
         'type': 'download',
