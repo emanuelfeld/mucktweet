@@ -61,6 +61,7 @@
   section[selected='true'] {
     display: block;
   }
+
   .row-item {
     background:#f9f9f9;
     border-bottom:1px solid #e0e0e0;
@@ -93,12 +94,27 @@
 }
 
 @media all and (max-width: 800px){
+  body {
+    font:14px/1.6 monospace;
+  }
+  
   section {
     display: block;
   }
 
-  #menu-bar {
-    display: none;
+  .menu-item[selected='true'] {
+    background:#f9f9f9;
+    color:#333;
+  }
+
+ .menu-item {
+    display: block;
+    background:#f9f9f9;
+    border-style:solid;
+    border-width: 0px 0 1px 0;
+    border-color: #e0e0e0;
+    padding:8px 15px;
+    margin:0;
   }
 }
 

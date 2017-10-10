@@ -11,7 +11,7 @@
     <meta content="https://raw.githubusercontent.com/emanuelfeld/mucktweet/master/assets/screenshot-1.png" property="og:image">
     <meta content="MuckTweet, Twitter, tweets, abuse, social, media, online" name="keywords">
     <meta content="MuckTweet is a Chrome extension for tracking your Twitter abuse reports https://emanuelfeld.github.io/mucktweet" name="description">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MuckTweet</title>
     <script src="js/index.js"></script>
     <link href="css/index.css" rel="stylesheet" type="text/css">
@@ -21,15 +21,15 @@
         <h1 id="menu-title">MuckTweet</h1>
         <div id="menu-bar">
             <a href="#about"><div id="menu-about" class="menu-item button about" selected="true">About</div></a>
-            <a href="https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk" onclick="trackOutboundLink('https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk'); return false;"><div id="menu-chrome" class="button chrome" selected="false">Download</div></a>
+            <a href="https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk" onclick="trackOutboundLink('https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk'); return false;"><div id="menu-chrome" class="menu-item button chrome" selected="false">Download</div></a>
             <a href="#issues"><div id="menu-issues" class="menu-item button issues" selected="false">Report Bugs</div></a>
             <a href="https://twitter.com/share?url=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fmucktweet%2Fdjckflgmaallfimdmmgalachmkaledhk&text=MuckTweet%20is%20a%20Chrome%20extension%20that%20helps%20users%20keep%20on%20top%20of%20Twitter%20abuse.">
-            <div id="menu-share" class="button share" selected="false">Share</div>
+            <div id="menu-share" class="menu-item button share" selected="false">Share</div>
             </a>
             <a href="#donate"><div id="menu-donate" class="menu-item button donate" selected="false">Donate</div></a>
         </div>
     </header>
-    <section class="container about" selected="true">
+    <section id="about" class="container about" selected="true">
         <h2 class="narrow">About</h2>
         <p>It's 2017 and Twitter's Arab Spring euphoria is long over.</p>
 
@@ -49,12 +49,12 @@
         <span class="button narrow">
         <a class="narrow" href="https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk" onclick="trackOutboundLink('https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk'); return false;">Download for Chrome</a></span>
     </section>
-    <section class="container donate" selected="false">
+    <section id="donate" class="container donate" selected="false">
         <h2 class="narrow">Donate</h2>
         <p>Buy us a cuppa tea<a></a>.</p>
         <span class="button"><a href="https://paypal.me/efeld/10" onclick="trackOutboundLink('https://paypal.me/efeld/10'); return false;">PayPal &#8599;</a></span>
     </section>
-    <section class="container issues" selected="false">
+    <section id="issues" class="container issues" selected="false">
         <h2 class="narrow">Report Bugs</h2>
         <p>Found a bug? You can send a report using <a href="https://goo.gl/forms/gq94rnt2jTLTZa4k2" onclick="trackOutboundLink('https://goo.gl/forms/gq94rnt2jTLTZa4k2'); return false;">this form</a> or create an issue in the <a href="https://github.com/emanuelfeld/mucktweet/issues" onclick="trackOutboundLink('https://github.com/emanuelfeld/mucktweet/issues'); return false;">GitHub repository</a>.</p>
 
