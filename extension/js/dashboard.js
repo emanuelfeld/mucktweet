@@ -14,23 +14,29 @@
       clickHashTab()
     }
 
-    localStorage.get([
-      'lastUpdate',
-      'recentStatistics',
-      'totalStatistics',
-      'recentUpdates'
-    ], function (res) {
+    localStorage.get({
+      'lastUpdate': Date.now(),
+      'totalStatistics': '{}',
+      'recentUserUpdates': '{}',
+      'recentTweetUpdates': '{}'
+    }, function (res) {
+      console.log(res)
       formatRecentlyTitle(res.lastUpdate)
       formatStatistics(JSON.parse(res.totalStatistics))
-      let recentUpdates = JSON.parse(res.recentUpdates)
-      for (let i = 0; i < recentUpdates.length; i++) {
-        let update = recentUpdates[i]
-        let storeName = update.storeName
-        let content = update.content
-        formatUpdate(storeName, content)
-      }
+      let recentUserUpdates = JSON.parse(res.recentUserUpdates)
+      let recentTweetUpdates = JSON.parse(res.recentTweetUpdates)
+      addUpdates(recentUserUpdates, 'user')
+      addUpdates(recentTweetUpdates, 'tweet')
     })
   })
+
+  function addUpdates (data, storeName) {
+    for (let i = 0; i < Object.keys(data).length; i++) {
+      let id = Object.keys(data)[i]
+      let content = data[id]
+      formatUpdate(content, storeName)
+    }
+  }
 
   // Navigation
 
@@ -57,7 +63,8 @@
     title.textContent += ' ' + new Date(lastUpdate).toJSON().slice(0, 10)
   }
 
-  function formatUpdate (storeName, content) {
+  function formatUpdate (content, storeName) {
+    console.log(content)
     let contentDiv
     if (storeName === 'user') {
       contentDiv = formatUserRow(content)
@@ -123,15 +130,17 @@
   // Statistics
 
   function formatStatistics (statistics) {
-    let userReportCount = document.getElementById('user-reported-stats')
-    userReportCount.textContent = statistics['user']['reported']
-    let userSuspendedCount = document.getElementById('user-suspended-stats')
-    userSuspendedCount.textContent = statistics['user']['suspended']
-    let userDeletedCount = document.getElementById('user-deleted-stats')
-    userDeletedCount.textContent = statistics['user']['deleted']
-    let tweetReportCount = document.getElementById('tweet-reported-stats')
-    tweetReportCount.textContent = statistics['tweet']['reported']
-    let tweetDeletedCount = document.getElementById('tweet-deleted-stats')
-    tweetDeletedCount.textContent = statistics['tweet']['deleted']
+    if (Object.keys(statistics).length > 0) {
+      let userReportCount = document.getElementById('user-reported-stats')
+      userReportCount.textContent = statistics['user']['reported']
+      let userSuspendedCount = document.getElementById('user-suspended-stats')
+      userSuspendedCount.textContent = statistics['user']['suspended']
+      let userDeletedCount = document.getElementById('user-deleted-stats')
+      userDeletedCount.textContent = statistics['user']['deleted']
+      let tweetReportCount = document.getElementById('tweet-reported-stats')
+      tweetReportCount.textContent = statistics['tweet']['reported']
+      let tweetDeletedCount = document.getElementById('tweet-deleted-stats')
+      tweetDeletedCount.textContent = statistics['tweet']['deleted']
+    }
   }
 })()

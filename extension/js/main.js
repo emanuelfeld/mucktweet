@@ -21,7 +21,6 @@
       'status': 'available',
       'reportCount': 1,
       'reportDate': Date.now(),
-      'hasUpdate': 0,
       'updateDate': null
     }
   }
@@ -35,7 +34,6 @@
       'status': 'available',
       'postDate': parseInt(node.querySelector('._timestamp').getAttribute('data-time-ms')),
       'reportDate': Date.now(),
-      'hasUpdate': 0,
       'updateDate': null
     }
   }

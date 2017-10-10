@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "MuckTweet",
-    "version": "1.4",
+    "version": "1.5",
     "description": "Monitor your Twitter reports",
     "author": "Emanuel Feld",
     "background": {

@@ -19,9 +19,9 @@
 
   let badgeCounter
   let lastUpdate
-  let recentUpdates
+  let recentUserUpdates
+  let recentTweetUpdates
   let totalStatistics
-  let recentStatistics
 
   const STATS_DEFAULT = JSON.stringify({
     'user': {
@@ -38,28 +38,28 @@
   function resetLocalStorage () {
     console.log('Calling reset locale storage')
     localStorage.set({
-      'recentUpdates': '[]',
+      'recentUserUpdates': '{}',
+      'recentTweetUpdates': '{}',
       'lastUpdate': Date.now(),
-      'recentStatistics': STATS_DEFAULT,
       'badgeCounter': 0
     }, function () {
-      recentUpdates = []
+      recentUserUpdates = {}
+      recentTweetUpdates = {}
       lastUpdate = Date.now()
-      recentStatistics = JSON.parse(STATS_DEFAULT)
       badgeCounter = 0
       updateBadge()
     })
   }
 
   localStorage.get({
-    'recentUpdates': '[]',
+    'recentUserUpdates': '{}',
+    'recentTweetUpdates': '{}',
     'lastUpdate': Date.now(),
-    'recentStatistics': STATS_DEFAULT,
     'totalStatistics': STATS_DEFAULT,
     'badgeCounter': 0
   }, function (res) {
-    recentUpdates = JSON.parse(res.recentUpdates)
-    recentStatistics = JSON.parse(res.recentStatistics)
+    recentUserUpdates = JSON.parse(res.recentUserUpdates)
+    recentTweetUpdates = JSON.parse(res.recentTweetUpdates)
     totalStatistics = JSON.parse(res.totalStatistics)
     lastUpdate = res.lastUpdate
     badgeCounter = res.badgeCounter
@@ -75,6 +75,7 @@
         'active': true,
         'url': url + '#about'})
     })
+    localStorage.set({'lastUpdate': Date.now()})
   }
 
   window.browser.runtime.onMessage.addListener(handleMessage)
@@ -90,7 +91,6 @@
       sendResponse({'content': url + '#' + content})
     } else if (type === 'report') {
       addReportToStore(content)
-      console.log(content)
       sendResponse({'content': 'ok'})
     } else if (type === 'download') {
       getAllItemsInStore(request.content.storeName, request.content.format)
@@ -223,13 +223,14 @@
   // Update functions
 
   function addReportToStore (content) {
-    console.log(content)
     if (Object.keys(content.userData).length > 0) {
       queryDb(content.userData['id'], DB_USER_STORE_NAME, handleUserReport)
+      addToRecentUpdates(content.userData, DB_USER_STORE_NAME)
     }
 
     if (Object.keys(content.tweetData).length > 0) {
       queryDb(content.tweetData['id'], DB_TWEET_STORE_NAME, handleTweetReport)
+      addToRecentUpdates(content.tweetData, DB_TWEET_STORE_NAME)
     }
 
     function handleUserReport (entry) {
@@ -260,7 +261,7 @@
   }
 
   function getUpdates (force = false) {
-    console.log('calling get updates')
+    console.log('Calling get updates')
     if (DEBUG === true || force === true || lastUpdate === 0 ||
       (Date.now() > lastUpdate + UPDATE_WAIT)) {
       resetLocalStorage()
@@ -275,23 +276,26 @@
     addToDb(value, storeName)
     updateBadge(badgeCounter++)
 
-    recentStatistics[storeName][value.status] += 1
     totalStatistics[storeName][value.status] += 1
 
     addToRecentUpdates(value, storeName)
 
     localStorage.set({
-      'recentStatistics': JSON.stringify(recentStatistics),
       'totalStatistics': JSON.stringify(totalStatistics),
       'badgeCounter': badgeCounter
     })
   }
 
   function addToRecentUpdates (value, storeName) {
-    console.log('adding', value, 'to recent updates')
-    recentUpdates.push({'storeName': storeName, 'content': value})
+    console.log('Adding', value, 'to recent updates')
+    if (storeName === 'user') {
+      recentUserUpdates[value.id] = value
+    } else if (storeName === 'tweet') {
+      recentTweetUpdates[value.id] = value
+    }
     localStorage.set({
-      'recentUpdates': JSON.stringify(recentUpdates)
+      'recentUserUpdates': JSON.stringify(recentUserUpdates),
+      'recentTweetUpdates': JSON.stringify(recentTweetUpdates)
     })
   }
 
@@ -304,11 +308,10 @@
 
     req.onsuccess = function (evt) {
       let cursor = evt.target.result
-        if (cursor && cursor.value.updateDate === null) {
-          let value = cursor.value
-          fetch('https://twitter.com/intent/user?user_id=' + value.id)
+      if (cursor && cursor.value.updateDate === null) {
+        let value = cursor.value
+        fetch('https://twitter.com/intent/user?user_id=' + value.id)
             .then(function (res) {
-              console.log(res)
               if (res.url === 'https://twitter.com/account/suspended') {
                 updateItemInStore(value, 'suspended', DB_USER_STORE_NAME)
               } else if (res.status === 404) {
@@ -317,11 +320,11 @@
                 addToRecentUpdates(value, DB_USER_STORE_NAME)
               }
             })
-          cursor.continue()
-        } else if (cursor) {
-          cursor.continue()
-        }
+        cursor.continue()
+      } else if (cursor) {
+        cursor.continue()
       }
+    }
 
     req.onerror = function (evt) {
       console.error('Failed to update ' + DB_USER_STORE_NAME + ' store.')
@@ -341,7 +344,7 @@
         let value = cursor.value
         fetch('https://twitter.com' + value.permalinkPath)
           .then(function (res) {
-            if (res.status === 404 || DEBUG) {
+            if (res.status === 404) {
               updateItemInStore(value, 'deleted', DB_TWEET_STORE_NAME)
             } else {
               addToRecentUpdates(value, DB_TWEET_STORE_NAME)
