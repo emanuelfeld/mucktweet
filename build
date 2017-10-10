@@ -15,5 +15,6 @@ for file in $script_dir/*.js; do
     mv "$script_dir/tmp_$filename" "$file"
 done
 
+rm -f $new_dir/.DS_STORE
 zip -r $new_dir $new_dir
 rm -rf $new_dir

@@ -80,13 +80,6 @@
       console.log('Submitting report.')
       console.log('Submitting user report: ' + JSON.stringify(userData))
       console.log('Submitting tweet report: ' + JSON.stringify(tweetData))
-      console.log({
-        'type': 'report',
-        'content': {
-          'userData': userData,
-          'tweetData': tweetData
-        }
-      })
       window.browser.runtime.sendMessage({
         'type': 'report',
         'content': {
