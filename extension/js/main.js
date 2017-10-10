@@ -74,12 +74,19 @@
            Object.keys(tweetData).length > 0
   }
 
-  document.onclick = function (evt) {
+  document.addEventListener('click', function (evt) {
     console.log('Clicked', evt.target)
     if ((DEBUG && hasReportData()) || submittedReport(evt.target)) {
       console.log('Submitting report.')
       console.log('Submitting user report: ' + JSON.stringify(userData))
       console.log('Submitting tweet report: ' + JSON.stringify(tweetData))
+      console.log({
+        'type': 'report',
+        'content': {
+          'userData': userData,
+          'tweetData': tweetData
+        }
+      })
       window.browser.runtime.sendMessage({
         'type': 'report',
         'content': {
@@ -106,5 +113,5 @@
         console.log('Beginning tweet report: ' + JSON.stringify(tweetData))
       }
     }
-  }
+  })
 })()

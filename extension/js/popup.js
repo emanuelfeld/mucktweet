@@ -1,18 +1,18 @@
 (function () {
   'use strict'
 
-  if (window.chrome) {
+  if (!!window.chrome) {
     window.browser = window.chrome
   } else {
     window.browser = browser
   }
 
-  document.onclick = function (evt) {
+  document.addEventListener('click', function (evt) {
     window.browser.runtime.sendMessage({
       'type': 'popup',
       'content': evt.target.id
     }, function (res) {
       window.open(res.content)
     })
-  }
+  })
 })()

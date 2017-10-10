@@ -106,12 +106,17 @@
   // Download Data
 
   document.addEventListener('click', function (evt) {
-    if (evt.target.id === 'user-data' || evt.target.id === 'tweet-data') {
+    if (evt.target.classList.contains('download-button')) {
       let storeName = evt.target.id.split('-')[0]
+      let format = evt.target.id.split('-')[2]
       console.log('Requesting ' + storeName + ' data download.')
       window.browser.runtime.sendMessage({
         'type': 'download',
-        'content': storeName})
+        'content': {
+          'storeName': storeName,
+          'format': format
+        }
+      })
     }
   })
 

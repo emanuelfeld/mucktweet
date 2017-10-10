@@ -6,6 +6,7 @@
     "author": "Emanuel Feld",
     "background": {
         "scripts": [
+            "js/papaparse.min.js",
             "js/background.js"
         ]
     },
@@ -13,8 +14,8 @@
         "dashboard.html",
         "popup.html",
         "about.html",
-        "js/main.js",
-        "js/dashboard.js"
+        "js/dashboard.js",
+        "js/popup.js"
     ],
     "icons": { 
         "16": "img/icon16.png",

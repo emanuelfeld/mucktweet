@@ -1,39 +1,39 @@
 body {
-color:#333;
-font-family:monospace;
-font-size:15px;
-line-height:1.6em;
-margin:0 auto;
-padding:15px;
-width:720px;
+  color:#333;
+  font-family:monospace;
+  font-size:15px;
+  line-height:1.6em;
+  margin:0 auto;
+  padding:15px;
+  width:720px;
 }
 
 body> :first-child {
-margin-top:0;
+  margin-top:0;
 }
 
 body> :last-child {
-margin-bottom:0;
+  margin-bottom:0;
 }
 
 header {
-border-bottom:1px solid #333;
-margin-bottom:10px;
-padding:20px 0;
+  border-bottom:1px solid #333;
+  margin-bottom:10px;
+  padding:20px 0;
 }
 
 header > h1 {
-font-size:3em;
-padding-bottom:10px;
+  font-size:3em;
+  padding-bottom:10px;
 }
 
 header > div {
-padding-bottom:20px;
+  padding-bottom:20px;
 }
 
 h1 {
-font-size:25px;
-font-weight:400;
+  font-size:25px;
+  font-weight:400;
 }
 
 h2 {
@@ -41,66 +41,66 @@ h2 {
 }
 
 div {
-margin:0 auto;
-width:720px;
+  margin:0 auto;
+  width:720px;
 }
 
 a {
-color:#08c;
-text-decoration:none;
+  color:#08c;
+  text-decoration:none;
 }
 
 .container {
-padding:20px 0;
+  padding:20px 0;
 }
 
 .menu-item[selected='true'] {
-background-color:#333;
-color:#FFF;
+  background-color:#333;
+  color:#FFF;
 }
 
 .row-item {
-background:#f9f9f9;
-border-bottom:1px solid #e0e0e0;
-padding:8px 15px;
+  background:#f9f9f9;
+  border-bottom:1px solid #e0e0e0;
+  padding:8px 15px;
 }
 
 .button {
-color:#08c;
-border:1px solid #333;
-padding:5px;
+  color:#08c;
+  border:1px solid #333;
+  padding:5px;
 }
 
 .button.donate {
-background-color:#7bc043;
-border:1px solid #67a337;
-color:#FFF;
+  background-color:#7bc043;
+  border:1px solid #67a337;
+  color:#FFF;
 }
 
 .badge {
-background:#999;
-color:#fff;
-margin-right:10px;
-padding:3px 5px;
-text-align:center;
-text-transform:capitalize;
-width:80px;
+  background:#999;
+  color:#fff;
+  margin-right:10px;
+  padding:3px 5px;
+  text-align:center;
+  text-transform:capitalize;
+  width:80px;
 }
 
 .badge.available {
-background:#ee4035;
+  background:#ee4035;
 }
 
 .badge.suspended {
-background:#7bc043;
+  background:#7bc043;
 }
 
 .badge.deleted {
-background:#0392cf;
+  background:#0392cf;
 }
 
 .button:hover {
-cursor:pointer;
+  cursor:pointer;
 }
 
 span.badge.statistics {

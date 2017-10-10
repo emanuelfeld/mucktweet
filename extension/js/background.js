@@ -3,7 +3,7 @@
 
   const DEBUG = false
   const DB_NAME = DEBUG ? 'mucktweet-db-test' : 'mucktweet-db'
-  const DB_VERSION = 1
+  const DB_VERSION = 2
   const DB_USER_STORE_NAME = 'user'
   const DB_TWEET_STORE_NAME = 'tweet'
   const UPDATE_WAIT = DEBUG ? 1000 : 8.64e+7
@@ -35,27 +35,19 @@
     }
   })
 
-  const LOCAL_STORAGE_DEFAULT = {
-    'recentUpdates': '[]',
-    'lastUpdate': Date.now(),
-    'recentStatistics': STATS_DEFAULT,
-    'totalStatistics': STATS_DEFAULT,
-    'badgeCounter': 0
-  }
-
   function resetLocalStorage () {
     console.log('Calling reset locale storage')
     localStorage.set({
-    'recentUpdates': '[]',
-    'lastUpdate': Date.now(),
-    'recentStatistics': STATS_DEFAULT,
-    'badgeCounter': 0
+      'recentUpdates': '[]',
+      'lastUpdate': Date.now(),
+      'recentStatistics': STATS_DEFAULT,
+      'badgeCounter': 0
     }, function () {
       recentUpdates = []
       lastUpdate = Date.now()
       recentStatistics = JSON.parse(STATS_DEFAULT)
       badgeCounter = 0
-      updateBadge() 
+      updateBadge()
     })
   }
 
@@ -98,9 +90,10 @@
       sendResponse({'content': url + '#' + content})
     } else if (type === 'report') {
       addReportToStore(content)
+      console.log(content)
       sendResponse({'content': 'ok'})
     } else if (type === 'download') {
-      getAllItemsInStore(request.content)
+      getAllItemsInStore(request.content.storeName, request.content.format)
     }
   }
 
@@ -119,7 +112,6 @@
         let objectStore = db.createObjectStore('user',
           { keyPath: 'id' })
         objectStore.createIndex('status', 'status')
-        objectStore.createIndex('hasUpdate', 'hasUpdate')
       }
 
       if (!db.objectStoreNames.contains('tweet')) {
@@ -128,7 +120,6 @@
           { keyPath: 'id' })
         objectStore.createIndex('status', 'status')
         objectStore.createIndex('userTweets', 'userId')
-        objectStore.createIndex('hasUpdate', 'hasUpdate')
       }
     }
 
@@ -181,7 +172,7 @@
 
   // Download DB
 
-  function getAllItemsInStore (storeName) {
+  function getAllItemsInStore (storeName, format) {
     let tx = db.transaction(storeName, 'readonly')
     let store = tx.objectStore(storeName)
     let req = store.openCursor()
@@ -200,17 +191,24 @@
     }
 
     tx.oncomplete = function () {
-      downloadData(out, storeName)
+      downloadData(out, storeName, format)
     }
   }
 
-  function downloadData (content, filename) {
-    let dataStr = 'data:text/json;charset=utf-8,' +
-      encodeURIComponent(JSON.stringify(content, null, 4))
+  function downloadData (content, filename, format) {
+    let dataStr
+    if (format === 'json') {
+      dataStr = 'data:text/json;charset=utf-8,' +
+        encodeURIComponent(JSON.stringify(content, null, 4))
+    } else if (format === 'csv') {
+      let csv = Papa.unparse(content)
+      dataStr = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv)
+    }
     let tempAnchor = document.createElement('a')
     tempAnchor.setAttribute('href', dataStr)
-    tempAnchor.setAttribute('download', filename + '.json')
+    tempAnchor.setAttribute('download', filename + '.' + format)
     tempAnchor.click()
+    tempAnchor.remove()
   }
 
   // UI functions
@@ -224,7 +222,7 @@
 
   // Update functions
 
-  function addReportToStore (content) { 
+  function addReportToStore (content) {
     console.log(content)
     if (Object.keys(content.userData).length > 0) {
       queryDb(content.userData['id'], DB_USER_STORE_NAME, handleUserReport)
@@ -243,8 +241,7 @@
         addToDb(content.userData, DB_USER_STORE_NAME)
       } else {
         console.warn('User already reported. Updating.')
-        entry['userReportCount']++
-        entry['hasUpdate'] = 0
+        entry['reportCount']++
         addToDb(entry, DB_USER_STORE_NAME)
       }
     }
@@ -258,7 +255,7 @@
           'totalStatistics': JSON.stringify(totalStatistics)})
       } else {
         console.warn('Tweet already reported.')
-      }      
+      }
     }
   }
 
@@ -266,15 +263,14 @@
     console.log('calling get updates')
     if (DEBUG === true || force === true || lastUpdate === 0 ||
       (Date.now() > lastUpdate + UPDATE_WAIT)) {
-        resetLocalStorage()
-        updateTweetStore()
-        updateUserStore()        
+      resetLocalStorage()
+      updateTweetStore()
+      updateUserStore()
     }
   }
 
   function updateItemInStore (value, newStatus, storeName) {
     value.status = newStatus
-    value.hasUpdate = 0
     value.updateDate = Date.now()
     addToDb(value, storeName)
     updateBadge(badgeCounter++)
@@ -307,13 +303,13 @@
     let req = index.openCursor()
 
     req.onsuccess = function (evt) {
-      if (evt.target.result) {
-        let value = evt.target.result.value
-        if(value.updateDate === null) {
-        fetch('https://twitter.com/intent/user?user_id=' + value.id)
+      let cursor = evt.target.result
+        if (cursor && cursor.value.updateDate === null) {
+          let value = cursor.value
+          fetch('https://twitter.com/intent/user?user_id=' + value.id)
             .then(function (res) {
               console.log(res)
-              if (res.url === 'https://twitter.com/account/suspended' || DEBUG) {
+              if (res.url === 'https://twitter.com/account/suspended') {
                 updateItemInStore(value, 'suspended', DB_USER_STORE_NAME)
               } else if (res.status === 404) {
                 updateItemInStore(value, 'deleted', DB_USER_STORE_NAME)
@@ -321,19 +317,17 @@
                 addToRecentUpdates(value, DB_USER_STORE_NAME)
               }
             })
-      } else {
-        value.hasUpdate = 0
-        addToDb(value, DB_USER_STORE_NAME)
+          cursor.continue()
+        } else if (cursor) {
+          cursor.continue()
+        }
       }
-      evt.target.result.continue()
-    }
 
     req.onerror = function (evt) {
       console.error('Failed to update ' + DB_USER_STORE_NAME + ' store.')
       console.error(this.error)
     }
   }
-}
 
   function updateTweetStore () {
     let tx = db.transaction(DB_TWEET_STORE_NAME, 'readwrite')
@@ -347,7 +341,7 @@
         let value = cursor.value
         fetch('https://twitter.com' + value.permalinkPath)
           .then(function (res) {
-            if (res.status === 404) {
+            if (res.status === 404 || DEBUG) {
               updateItemInStore(value, 'deleted', DB_TWEET_STORE_NAME)
             } else {
               addToRecentUpdates(value, DB_TWEET_STORE_NAME)
@@ -355,9 +349,6 @@
           })
         cursor.continue()
       } else if (cursor) {
-        let value = cursor.value
-        value.hasUpdate = 0
-        addToDb(value, DB_TWEET_STORE_NAME)
         cursor.continue()
       }
     }
