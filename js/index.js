@@ -5,17 +5,17 @@ let touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click'
 window.addEventListener('hashchange', clickHashTab, false)
 
 function clickHashTab () {
-  let oldMenuItem = document.querySelector('[selected="true"]')
+  let oldMenuItem = document.querySelector('.menu-item[selected="true"]')
   oldMenuItem.setAttribute('selected', 'false')
   let oldHash = oldMenuItem.id.split('-')[1]
   let oldSection = document.querySelector('section.' + oldHash)
-  oldSection.style.display = 'none'
+  oldSection.setAttribute('selected', 'false')
 
   let newHash = window.location.hash.split('#')[1]
   let newMenuItem = document.querySelector('.menu-item.' + newHash)
   newMenuItem.setAttribute('selected', 'true')
   let newSection = document.querySelector('section.' + newHash)
-  newSection.style.display = 'block'
+  newSection.setAttribute('selected', 'true')
   sendLocationWithHash()
 }
 

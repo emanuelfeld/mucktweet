@@ -54,6 +54,13 @@
     color:#FFF;
   }
 
+  section {
+    display: none;
+  }
+
+  section[selected='true'] {
+    display: block;
+  }
   .row-item {
     background:#f9f9f9;
     border-bottom:1px solid #e0e0e0;
@@ -84,3 +91,14 @@
     cursor:pointer;
   }
 }
+
+@media all and (max-width: 800px){
+  section {
+    display: block;
+  }
+
+  #menu-bar {
+    display: none;
+  }
+}
+
