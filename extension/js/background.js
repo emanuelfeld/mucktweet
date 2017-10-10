@@ -69,13 +69,12 @@
   // Event listeners and message handlers
 
   if (DEBUG === false) {
-    window.browser.runtime.onInstalled.addListener(function () {
-      let url = window.browser.extension.getURL('dashboard.html')
-      window.browser.tabs.update({
-        'active': true,
-        'url': url + '#about'})
+    window.browser.runtime.onInstalled.addListener(function (details) {
+      if (details.reason === 'install') {
+        let url = window.browser.extension.getURL('dashboard.html')
+        window.open(url + '#about')
+      }
     })
-    localStorage.set({'lastUpdate': Date.now()})
   }
 
   window.browser.runtime.onMessage.addListener(handleMessage)
