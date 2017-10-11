@@ -13,7 +13,7 @@
   let tweetData = {}
 
   function getUserData (node) {
-    console.log('Parsing user data.')
+    console.log('Parsing user data')
     return {
       'id': node.getAttribute('data-user-id'),
       'screenName': node.getAttribute('data-screen-name'),
@@ -26,7 +26,7 @@
   }
 
   function getTweetData (node) {
-    console.log('Parsing tweet data.')
+    console.log('Parsing tweet data')
     return {
       'id': node.getAttribute('data-tweet-id'),
       'userId': node.getAttribute('data-user-id'),
@@ -72,12 +72,17 @@
            Object.keys(tweetData).length > 0
   }
 
+  window.addEventListener('load', function (evt) {
+    window.browser.runtime.sendMessage({'type': 'update'}, function (res) {
+      console.log('Sent update message', res.content)
+    })
+  })
+
   document.addEventListener('click', function (evt) {
     console.log('Clicked', evt.target)
     if ((DEBUG && hasReportData()) || submittedReport(evt.target)) {
-      console.log('Submitting report.')
-      console.log('Submitting user report: ' + JSON.stringify(userData))
-      console.log('Submitting tweet report: ' + JSON.stringify(tweetData))
+      console.log('Submitting user report:', JSON.stringify(userData))
+      console.log('Submitting tweet report:', JSON.stringify(tweetData))
       window.browser.runtime.sendMessage({
         'type': 'report',
         'content': {
@@ -87,21 +92,23 @@
       }, function (res) {
         userData = {}
         tweetData = {}
-        window.browser.runtime.sendMessage({'type': 'update'})
+        window.browser.runtime.sendMessage({'type': 'update'}, function (res) {
+          console.log('Sent update messaage', res.content)
+        })
       })
     } else if (beganReport(evt.target, 'user')) {
       let node = document.querySelector('.user-actions')
       if (node) {
         userData = getUserData(node)
-        console.log('Beginning user report: ' + JSON.stringify(userData))
+        console.log('Beginning user report:', JSON.stringify(userData))
       }
     } else if (beganReport(evt.target, 'tweet')) {
       let node = evt.target.closest('.tweet')
       if (node) {
         userData = getUserData(node)
-        console.log('Beginning user report: ' + JSON.stringify(userData))
+        console.log('Beginning user report:', JSON.stringify(userData))
         tweetData = getTweetData(node)
-        console.log('Beginning tweet report: ' + JSON.stringify(tweetData))
+        console.log('Beginning tweet report:', JSON.stringify(tweetData))
       }
     }
   })

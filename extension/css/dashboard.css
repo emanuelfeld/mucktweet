@@ -50,19 +50,16 @@ a {
   text-decoration:none;
 }
 
+section {
+  display: none;
+}
+
+section[selected='true'] {
+  display: block;
+}
+
 .container {
   padding:20px 0;
-}
-
-.menu-item[selected='true'] {
-  background-color:#333;
-  color:#FFF;
-}
-
-.row-item {
-  background:#f9f9f9;
-  border-bottom:1px solid #e0e0e0;
-  padding:8px 15px;
 }
 
 .button {
@@ -71,10 +68,25 @@ a {
   padding:5px;
 }
 
-.button.donate {
+.button:hover {
+  cursor:pointer;
+}
+
+.menu-item[selected='true'] {
+  background-color:#333;
+  color:#FFF;
+}
+
+.menu-item.donate {
   background-color:#7bc043;
   border:1px solid #67a337;
   color:#FFF;
+}
+
+.row-item {
+  background:#f9f9f9;
+  border-bottom:1px solid #e0e0e0;
+  padding:8px 15px;
 }
 
 .badge {
@@ -97,10 +109,6 @@ a {
 
 .badge.deleted {
   background:#0392cf;
-}
-
-.button:hover {
-  cursor:pointer;
 }
 
 span.badge.statistics {

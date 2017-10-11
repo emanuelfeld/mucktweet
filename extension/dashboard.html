@@ -9,15 +9,15 @@
     <header>
         <h1 id="menu-title">MuckTweet</h1>
         <div id="menu-bar">
-            <a href="#updates"><span class="menu-item button updates" selected="true">Recently</span></a>
-            <a href="#statistics"><span class="menu-item button statistics" selected="false">Statistics</span></a>
-            <a href="#download"><span class="menu-item button download" selected="false">Download Data</span></a>
-            <a href="#issues"><span class="menu-item button issues" selected="false">Report Bugs</span></a>
-            <a href="#about"><span class="menu-item button about" selected="false">About</span></a>
-            <a href="#donate"><span class="menu-item button donate" selected="false">Donate</span></a>
+            <a href="#updates"><span id="menu-updates" class="menu-item button updates" selected="true">Recently</span></a>
+            <a href="#statistics"><span id="menu-statistics" class="menu-item button statistics" selected="false">Statistics</span></a>
+            <a href="#download"><span id="menu-download" class="menu-item button download" selected="false">Download Data</span></a>
+            <a href="#issues"><span id="menu-issues" class="menu-item button issues" selected="false">Report Bugs</span></a>
+            <a href="#about"><span id="menu-about" class="menu-item button about" selected="false">About</span></a>
+            <a href="#donate"><span id="menu-donate" class="menu-item button donate" selected="false">Donate</span></a>
         </div>
     </header>
-    <section class="container updates" style="display: block;">
+    <section class="container updates" selected="true">
         <h1 id="title">Since the last update on</h1>
         <div class="container" id="suspended">
             <h1><span class='badge suspended'>Suspended</span></h1>
@@ -38,7 +38,7 @@
             </div>
         </div>
     </section>
-    <section class="container statistics" style="display: none;">
+    <section class="container statistics" selected="false">
         <h1>Since you installed MuckTweet</h1>
         <h2>Users</h2>
         <div>
@@ -58,7 +58,7 @@
             <span class='statistics badge suspended'>Removed</span> <span id='tweet-deleted-stats'>0</span>
         </div>
     </section>
-    <section class="container about" style="display: none;">
+    <section class="container about" selected="false">
         <p>It's 2017 and Twitter's Arab Spring euphoria is long over.</p>
 
         <p>We've traded <a href="https://en.wikipedia.org/wiki/Gamergate_controversy#Harassment_and_Twitter" target="_blank">Gamergate</a> for <a href="https://en.wikipedia.org/wiki/Pizzagate_conspiracy_theory" target="_blank">Pizzagate</a>. Trump uses his account as a literal <a href="https://www.nytimes.com/2016/12/08/us/politics/donald-trump-twitter-carrier-chuck-jones.html" target="_blank">bully pulpit</a>. Journalists <a href="https://newrepublic.com/article/134534/told-truth-donald-trump-rally-trolls-threatened-life" target="_blank">receive death threats</a> in 140 characters (well, now 280). Leslie Jones has been forced to perform double duty as a <a href="https://www.thecut.com/2016/08/a-timeline-of-leslie-joness-horrific-online-abuse.html" target="_blank">troll buster</a>. And even Twitter co-founder <a href="https://twitter.com/biz/status/913992534157750272" target="_blank">Biz Stone struggles</a> to get neo-Nazis booted.</p>
@@ -74,21 +74,21 @@
         <p>You can contact <span style="text-decoration: underline;">mucktweet at gmail dot com</span> with questions.</p>
         <!-- <h1>Frequently Asked Questions</h1> -->
     </section>
-    <section class="container issues" style="display: none;">
+    <section class="container issues" selected="false">
         <p>Found a bug? You can send a report using <a href="https://goo.gl/forms/gq94rnt2jTLTZa4k2" target="_blank">this form</a> or create an issue in the <a href="https://github.com/emanuelfeld/mucktweet/issues" target="_blank">GitHub repository</a>.</p>
 
         <p>I'll do my best to resolve it in a timely manner. Keep in mind that MuckTweet is free. I'm not being paid to make or maintain it.</p> 
 
         <p>It would be really nice if you sent a donation.</p>
     </section>
-    <section class="container download" style="display: none">
+    <section class="container download" selected="false">
         <h2>Download a local copy of your data.</h2>
         <h3>JSON format</h2>
         <span id="user-data-json" class="button download-button">User Data &#8600;</span> <span id="tweet-data-json" class="button download-button">Tweet Data &#8600;</span>
         <h3>CSV format</h2>
         <span id="user-data-csv" class="button download-button">User Data &#8600;</span> <span id="tweet-data-csv" class="button download-button">Tweet Data &#8600;</span>
     </section>
-    <section class="container donate" style="display: none;">
+    <section class="container donate" selected="false">
         <p>Buy us a cuppa tea.</p>
         <span class="button"><a href="https://paypal.me/efeld/10" target="_blank">PayPal</a></span>
     </section>

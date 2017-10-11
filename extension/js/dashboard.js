@@ -20,13 +20,10 @@
       'recentUserUpdates': '{}',
       'recentTweetUpdates': '{}'
     }, function (res) {
-      console.log(res)
-      formatRecentlyTitle(res.lastUpdate)
+      formatLastUpdateTitle(res.lastUpdate)
       formatStatistics(JSON.parse(res.totalStatistics))
-      let recentUserUpdates = JSON.parse(res.recentUserUpdates)
-      let recentTweetUpdates = JSON.parse(res.recentTweetUpdates)
-      addUpdates(recentUserUpdates, 'user')
-      addUpdates(recentTweetUpdates, 'tweet')
+      addUpdates(JSON.parse(res.recentUserUpdates), 'user')
+      addUpdates(JSON.parse(res.recentTweetUpdates), 'tweet')
     })
   })
 
@@ -43,70 +40,51 @@
   window.addEventListener('hashchange', clickHashTab, false)
 
   function clickHashTab () {
-    let oldMenuItem = document.querySelector('[selected="true"]')
-    let oldHash = oldMenuItem.parentElement.href.split('#')[1]
-    oldMenuItem.setAttribute('selected', 'false')
+    let oldMenuItem = document.querySelector('.menu-item[selected="true"]')
+    let oldHash = oldMenuItem.id.split('-')[1]
     let oldSection = document.querySelector('section.' + oldHash)
-    oldSection.style.display = 'none'
+    oldMenuItem.setAttribute('selected', 'false')
+    oldSection.setAttribute('selected', 'false')
 
     let newHash = window.location.hash.split('#')[1]
     let newMenuItem = document.querySelector('.menu-item.' + newHash)
-    newMenuItem.setAttribute('selected', 'true')
     let newSection = document.querySelector('section.' + newHash)
-    newSection.style.display = 'block'
+    newMenuItem.setAttribute('selected', 'true')
+    newSection.setAttribute('selected', 'true')
   }
 
   // Recently
 
-  function formatRecentlyTitle (lastUpdate) {
+  function formatLastUpdateTitle (lastUpdate) {
     let title = document.getElementById('title')
     title.textContent += ' ' + new Date(lastUpdate).toJSON().slice(0, 10)
   }
 
   function formatUpdate (content, storeName) {
-    console.log(content)
-    let contentDiv
-    if (storeName === 'user') {
-      contentDiv = formatUserRow(content)
-    } else if (storeName === 'tweet') {
-      contentDiv = formatTweetRow(content)
-    }
-
-    let containerDiv
-    if (content.status === 'suspended') {
-      containerDiv = document.getElementById('suspended')
-    } else if (content.status === 'deleted') {
-      containerDiv = document.getElementById('deleted')
-    } else if (content.status === 'available') {
-      containerDiv = document.getElementById('available')
-    }
-
+    let contentDiv = formatRow(content, storeName)    
+    let containerDiv = document.getElementById(content.status)
     containerDiv.querySelector('.default').style.display = 'none'
     containerDiv.append(contentDiv)
   }
 
-  function formatUserRow (content) {
-    let contentDiv = document.createElement('div')
-    contentDiv.className = 'row-item'
-    contentDiv.textContent = 'User '
-    let contentLink = document.createElement('a')
-    contentLink.href = 'https://twitter.com/' + content.screenName
-    contentLink.setAttribute('target', '_blank')
-    contentLink.textContent = '@' + content.screenName
-    contentDiv.appendChild(contentLink)
-    return contentDiv
-  }
 
-  function formatTweetRow (content) {
+  function formatRow (content, storeName) {
+    let contentLink = document.createElement('a')
     let contentDiv = document.createElement('div')
     contentDiv.className = 'row-item'
-    let screenName = content.permalinkPath.split('/')[1]
-    let contentLink = document.createElement('a')
-    contentLink.href = 'https://twitter.com' + content.permalinkPath
     contentLink.setAttribute('target', '_blank')
-    contentLink.textContent = Date(content.postDate)
-    contentDiv.textContent = 'Tweet by @' + screenName + ' posted at '
-    contentDiv.append(contentLink)
+
+    if (storeName === 'user') {
+      contentLink.href = 'https://twitter.com/' + content.screenName
+      contentLink.textContent = '@' + content.screenName
+      contentDiv.textContent = 'User '
+    } else if (storeName === 'tweet') {
+      let screenName = content.permalinkPath.split('/')[1]
+      contentLink.href = 'https://twitter.com' + content.permalinkPath
+      contentLink.textContent = Date(content.postDate)
+      contentDiv.textContent = 'Tweet by @' + screenName + ' posted at '
+    }
+    contentDiv.appendChild(contentLink)
     return contentDiv
   }
 
@@ -115,13 +93,12 @@
   document.addEventListener('click', function (evt) {
     if (evt.target.classList.contains('download-button')) {
       let storeName = evt.target.id.split('-')[0]
-      let format = evt.target.id.split('-')[2]
-      console.log('Requesting ' + storeName + ' data download.')
+      let fileFormat = evt.target.id.split('-')[2]
       window.browser.runtime.sendMessage({
         'type': 'download',
         'content': {
           'storeName': storeName,
-          'format': format
+          'fileFormat': fileFormat
         }
       })
     }
@@ -131,16 +108,11 @@
 
   function formatStatistics (statistics) {
     if (Object.keys(statistics).length > 0) {
-      let userReportCount = document.getElementById('user-reported-stats')
-      userReportCount.textContent = statistics['user']['reported']
-      let userSuspendedCount = document.getElementById('user-suspended-stats')
-      userSuspendedCount.textContent = statistics['user']['suspended']
-      let userDeletedCount = document.getElementById('user-deleted-stats')
-      userDeletedCount.textContent = statistics['user']['deleted']
-      let tweetReportCount = document.getElementById('tweet-reported-stats')
-      tweetReportCount.textContent = statistics['tweet']['reported']
-      let tweetDeletedCount = document.getElementById('tweet-deleted-stats')
-      tweetDeletedCount.textContent = statistics['tweet']['deleted']
+      document.getElementById('user-reported-stats').textContent = statistics['user']['reported']
+      document.getElementById('user-suspended-stats').textContent = statistics['user']['suspended']
+      document.getElementById('user-deleted-stats').textContent = statistics['user']['deleted']
+      document.getElementById('tweet-reported-stats').textContent = statistics['tweet']['reported']
+      document.getElementById('tweet-deleted-stats').textContent = statistics['tweet']['deleted']
     }
   }
 })()
