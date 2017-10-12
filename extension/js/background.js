@@ -72,7 +72,7 @@
     let content = request.content
     if (type === 'update') {
       getUpdates()
-      sendResponse({'content': 'ok'})      
+      sendResponse({'content': 'ok'})
     } else if (type === 'popup') {
       let url = window.browser.extension.getURL('dashboard.html')
       sendResponse({'content': url + '#' + content})
@@ -165,7 +165,7 @@
     let store = tx.objectStore(storeName)
     let req = store.openCursor()
     let items = []
-    
+
     req.onsuccess = function (evt) {
       let cursor = evt.target.result
       if (cursor) {
@@ -293,7 +293,8 @@
         let value = cursor.value
         fetch('https://twitter.com' + value.permalinkPath)
           .then(function (res) {
-            if (res.status === 404) {
+            if (res.url === 'https://twitter.com/account/suspended' ||
+                res.status === 404) {
               updateItemInStore(value, 'deleted', DB_TWEET_STORE_NAME)
             } else {
               addToRecentUpdates(value, DB_TWEET_STORE_NAME)

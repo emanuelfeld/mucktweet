@@ -93,7 +93,7 @@
         userData = {}
         tweetData = {}
         window.browser.runtime.sendMessage({'type': 'update'}, function (res) {
-          console.log('Sent update messaage', res.content)
+          console.log('Sent update message', res.content)
         })
       })
     } else if (beganReport(evt.target, 'user')) {

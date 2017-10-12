@@ -61,12 +61,11 @@
   }
 
   function formatUpdate (content, storeName) {
-    let contentDiv = formatRow(content, storeName)    
+    let contentDiv = formatRow(content, storeName)
     let containerDiv = document.getElementById(content.status)
     containerDiv.querySelector('.default').style.display = 'none'
     containerDiv.append(contentDiv)
   }
-
 
   function formatRow (content, storeName) {
     let contentLink = document.createElement('a')
@@ -81,8 +80,8 @@
     } else if (storeName === 'tweet') {
       let screenName = content.permalinkPath.split('/')[1]
       contentLink.href = 'https://twitter.com' + content.permalinkPath
-      contentLink.textContent = Date(content.postDate)
-      contentDiv.textContent = 'Tweet by @' + screenName + ' posted at '
+      contentLink.textContent = new Date(content.postDate)
+      contentDiv.textContent = 'Tweet by @' + screenName + ' posted '
     }
     contentDiv.appendChild(contentLink)
     return contentDiv
