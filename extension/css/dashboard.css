@@ -58,6 +58,15 @@ section[selected='true'] {
   display: block;
 }
 
+span.question {
+  font-weight: 800;
+  display: inline-block;
+}
+
+span.answer {
+  display: inline-block;
+}
+
 .container {
   padding:20px 0;
 }
