@@ -14,6 +14,12 @@
       clickHashTab()
     }
 
+    if (window.location.hash === 'updates') {
+      window.browser.runtime.sendMessage({
+        'type': 'clearBadge'
+      })
+    }
+
     localStorage.get({
       'lastUpdate': Date.now(),
       'totalStatistics': '{}',

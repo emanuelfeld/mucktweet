@@ -1,7 +1,7 @@
 (function () {
   'use strict'
 
-  if (!!window.chrome) {
+  if (window.chrome) {
     window.browser = window.chrome
   } else {
     window.browser = browser
