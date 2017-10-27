@@ -23,6 +23,7 @@
   let recentUserUpdates
   let recentTweetUpdates
   let totalStatistics
+  let lastUpdate
 
   const STATS_DEFAULT = JSON.stringify({
     'user': {
@@ -43,12 +44,14 @@
     'recentUserUpdates': '{}',
     'recentTweetUpdates': '{}',
     'totalStatistics': STATS_DEFAULT,
-    'badgeCounter': 0
+    'badgeCounter': 0,
+    'lastUpdate': Date.now()
   }, function (res) {
     recentUserUpdates = JSON.parse(res.recentUserUpdates)
     recentTweetUpdates = JSON.parse(res.recentTweetUpdates)
     totalStatistics = JSON.parse(res.totalStatistics)
     badgeCounter = res.badgeCounter
+    lastUpdate = res.lastUpdate
     updateBadge()
     openDb()
   })
@@ -222,13 +225,14 @@
     localStorage.get({
       'lastUpdate': Date.now()
     }, function (res) {
-      if (Date.now() > res.lastUpdate + UPDATE_WAIT) {
+      lastUpdate = res.lastUpdate
+      if (Date.now() > lastUpdate + UPDATE_WAIT) {
         console.log('Updating')
         if (badgeCounter === 0) {
           resetLocalStorage()
         } else {
           updateTweetStore()
-          updateUserStore()          
+          updateUserStore()
         }
       }
     })
@@ -362,7 +366,7 @@
         console.log('Updating zombie user', content)
         totalStatistics[DB_USER_STORE_NAME]['unsuspended']++
         totalStatistics[DB_USER_STORE_NAME]['suspended']--
-        entry['statusHistory'].append({
+        entry['statusHistory'].push({
           'date': content.reportData['dateSubmitted'], 'action': 'unsuspended'
         })
         addToDb(entry, DB_USER_STORE_NAME)
@@ -382,6 +386,8 @@
 
   function updateItemStatus (entry, newStatus, storeName, displayStatus) {
     entry.status = newStatus
+    entry.statusHistory.push({
+      'date': lastUpdate, 'action': displayStatus })
     addToDb(entry, storeName)
     updateBadge(badgeCounter++)
 
