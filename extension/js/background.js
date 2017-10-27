@@ -42,7 +42,6 @@
   localStorage.get({
     'recentUserUpdates': '{}',
     'recentTweetUpdates': '{}',
-    'lastUpdate': Date.now(),
     'totalStatistics': STATS_DEFAULT,
     'badgeCounter': 0
   }, function (res) {
@@ -223,7 +222,7 @@
     localStorage.get({
       'lastUpdate': Date.now()
     }, function (res) {
-      if (res.lastUpdate === 0 || (Date.now() > res.lastUpdate + UPDATE_WAIT)) {
+      if (Date.now() > res.lastUpdate + UPDATE_WAIT) {
         console.log('Updating')
         if (badgeCounter === 0) {
           resetLocalStorage()
@@ -282,16 +281,16 @@
             .then(function (res) {
               if (res.url === 'https://twitter.com/account/suspended') {
                 if (value.status !== 'suspended') {
-                  updateItemStatus(value, 'suspended', DB_USER_STORE_NAME)
+                  updateItemStatus(value, 'suspended', DB_USER_STORE_NAME, 'suspended')
                 }
               } else if (res.status === 404) {
-                updateItemStatus(value, 'deleted', DB_USER_STORE_NAME)
+                updateItemStatus(value, 'deleted', DB_USER_STORE_NAME, 'deleted')
               } else if (CHECK_SUSPENDED === true && value.status === 'suspended') {
                 totalStatistics[DB_USER_STORE_NAME]['unsuspended']++
                 value.unsuspendCount = !value.unsuspendCount ? 1 : value.unsuspendCount + 1
-                updateItemStatus(value, 'available', DB_USER_STORE_NAME, true)
+                updateItemStatus(value, 'available', DB_USER_STORE_NAME, 'unsuspended')
               } else {
-                addItemToWatchList(value, DB_USER_STORE_NAME)
+                addItemToWatchList(value, DB_USER_STORE_NAME, 'available')
               }
             })
         cursor.continue()
@@ -320,9 +319,9 @@
           .then(function (res) {
             if (res.url === 'https://twitter.com/account/suspended' ||
                 res.status === 404) {
-              updateItemStatus(value, 'deleted', DB_TWEET_STORE_NAME)
+              updateItemStatus(value, 'deleted', DB_TWEET_STORE_NAME, 'deleted')
             } else {
-              addItemToWatchList(value, DB_TWEET_STORE_NAME)
+              addItemToWatchList(value, DB_TWEET_STORE_NAME, 'available')
             }
           })
         cursor.continue()
@@ -344,12 +343,12 @@
 
     if (content.userData['id'] !== undefined) {
       queryDb(content.userData['id'], DB_USER_STORE_NAME, handleUserReport)
-      addItemToWatchList(content.userData, DB_USER_STORE_NAME)
+      addItemToWatchList(content.userData, DB_USER_STORE_NAME, 'available')
     }
 
     if (content.tweetData['id'] !== undefined) {
       queryDb(content.tweetData['id'], DB_TWEET_STORE_NAME, handleTweetReport)
-      addItemToWatchList(content.tweetData, DB_TWEET_STORE_NAME)
+      addItemToWatchList(content.tweetData, DB_TWEET_STORE_NAME, 'available')
     }
 
     function handleUserReport (entry) {
@@ -381,14 +380,14 @@
     }
   }
 
-  function updateItemStatus (entry, newStatus, storeName, unsuspended = false) {
+  function updateItemStatus (entry, newStatus, storeName, displayStatus) {
     entry.status = newStatus
     addToDb(entry, storeName)
     updateBadge(badgeCounter++)
 
     totalStatistics[storeName][entry.status] += 1
 
-    addItemToWatchList(entry, storeName, unsuspended)
+    addItemToWatchList(entry, storeName, displayStatus)
 
     localStorage.set({
       'totalStatistics': JSON.stringify(totalStatistics),
@@ -396,12 +395,10 @@
     })
   }
 
-  function addItemToWatchList (value, storeName, unsuspended = false) {
+  function addItemToWatchList (value, storeName, displayStatus) {
     console.log('Adding', value, 'to recent updates')
+    value.status = displayStatus
     if (storeName === 'user') {
-      if (unsuspended === true) {
-        value.status = 'unsuspended'
-      }
       recentUserUpdates[value.id] = value
     } else if (storeName === 'tweet') {
       recentTweetUpdates[value.id] = value
