@@ -21,7 +21,7 @@
       for (let i = 0; i < inputs.length; i++) {
         if (inputs[i].checked === true) {
           let inputName = inputs[i].name
-          let inputValue = inputs[i].value.replace('-', ' ').toLowerCase()
+          let inputValue = inputs[i].value.replace('_', ' ').toLowerCase()
           if (inputName === 'report_type') {
             console.log('reportType', inputValue)
             reportData['reportType'] = inputValue
@@ -112,7 +112,7 @@
     console.log('Clicked', evt.target)
     getReportDetails()
 
-    if ((DEBUG && hasReportData()) || submittedReport(evt.target)) {
+    if ((DEBUG || submittedReport(evt.target)) && hasReportData()) {
       let userId = userData['id']
       let tweetId = tweetData['id']
 
