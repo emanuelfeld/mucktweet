@@ -9,16 +9,17 @@
 
   const DEBUG = false
   const DB_NAME = DEBUG ? 'mucktweet-db-test' : 'mucktweet-db'
-  const DB_VERSION = 2
+  const DB_VERSION = 3
   const DB_USER_STORE_NAME = 'user'
   const DB_TWEET_STORE_NAME = 'tweet'
+  const DB_REPORT_STORE_NAME = 'report'
   const UPDATE_WAIT = DEBUG ? 10000 : 8.64e+7
+  const CHECK_SUSPENDED = true
 
   let db
   let localStorage = window.browser.storage.local
 
   let badgeCounter
-  let lastUpdate
   let recentUserUpdates
   let recentTweetUpdates
   let totalStatistics
@@ -27,7 +28,8 @@
     'user': {
       'reported': 0,
       'suspended': 0,
-      'deleted': 0
+      'deleted': 0,
+      'unsuspended': 0
     },
     'tweet': {
       'reported': 0,
@@ -35,24 +37,28 @@
     }
   })
 
-  // Restore local storage variables, badge counter
+  ////////////
+  // SET UP //
+  ////////////
+
   localStorage.get({
     'recentUserUpdates': '{}',
     'recentTweetUpdates': '{}',
-    'lastUpdate': Date.now(),
     'totalStatistics': STATS_DEFAULT,
-    'badgeCounter': 0
+    'badgeCounter': 0,
+    'lastUpdate': Date.now()
   }, function (res) {
     recentUserUpdates = JSON.parse(res.recentUserUpdates)
     recentTweetUpdates = JSON.parse(res.recentTweetUpdates)
     totalStatistics = JSON.parse(res.totalStatistics)
-    lastUpdate = res.lastUpdate
     badgeCounter = res.badgeCounter
     updateBadge()
     openDb()
   })
 
-  // MESSAGE HANDLERS
+  //////////////////////
+  // MESSAGE HANDLERS //
+  //////////////////////
 
   // Open dashboard on first install
   if (DEBUG === false) {
@@ -82,10 +88,18 @@
       sendResponse({'content': 'ok'})
     } else if (type === 'download') {
       getAllItemsInStore(content.storeName, content.fileFormat)
+    } else if (type === 'clearBadge') {
+      clearBadge()
+      badgeCounter = 0
+      localStorage.set({
+        'badgeCounter': 0
+      })
     }
   }
 
-  // General DB functions
+  ////////////////////////
+  // BASIC DB FUNCTIONS //
+  ////////////////////////
 
   function openDb () {
     console.log('Opening MuckTweet DB')
@@ -94,6 +108,13 @@
     req.onupgradeneeded = function (evt) {
       console.log('Upgrading MuckTweet DB to version', DB_VERSION)
       db = this.result
+
+      if (!db.objectStoreNames.contains('report')) {
+        let objectStore = db.createObjectStore('report',
+          { keyPath: 'id', autoIncrement: true })
+        objectStore.createIndex('userId', 'userId')
+        objectStore.createIndex('tweetId', 'tweetId')
+      }
 
       if (!db.objectStoreNames.contains('user')) {
         console.log('Making the User object store')
@@ -108,6 +129,10 @@
           { keyPath: 'id' })
         objectStore.createIndex('status', 'status')
         objectStore.createIndex('userTweets', 'userId')
+      }
+
+      if (evt.oldVersion === 2) {
+
       }
     }
 
@@ -124,7 +149,7 @@
   }
 
   function addToDb (entry, storeName) {
-    console.log('Adding ID', entry['id'], 'to', storeName, 'store')
+    console.log('Adding', entry, 'to', storeName, 'store')
     let store = getObjectStore(storeName, 'readwrite')
     let req = store.put(entry)
 
@@ -158,7 +183,9 @@
     return tx.objectStore(storeName)
   }
 
-  // Download DB store as JSON or CSV
+  ////////////////////////
+  // DOWNLOAD FUNCTIONS //
+  ////////////////////////
 
   function getAllItemsInStore (storeName, fileFormat) {
     let tx = db.transaction(storeName, 'readonly')
@@ -200,56 +227,64 @@
     tempAnchor.remove()
   }
 
-  // UPDATE FUNCTIONS
+  //////////////////////
+  // UPDATE FUNCTIONS //
+  //////////////////////
 
   // Check status on open reports
-  function getUpdates (force = false) {
+  function getUpdates () {
     console.log('Checking if it is time for an update')
     localStorage.get({
       'lastUpdate': Date.now()
     }, function (res) {
-      console.log(DEBUG)
-      console.log(res.lastUpdate)
-      console.log(Date.now())
-      console.log(UPDATE_WAIT)
-      console.log((Date.now() > res.lastUpdate + UPDATE_WAIT))
-      if (DEBUG === true || force === true || res.lastUpdate === 0 ||
-        (Date.now() > res.lastUpdate + UPDATE_WAIT)) {
+      if (Date.now() > res.lastUpdate + UPDATE_WAIT) {
         console.log('Updating')
-        resetLocalStorage()
-        updateTweetStore()
-        updateUserStore()
+        localStorage.set({
+          'lastUpdate': Date.now()
+        })
+        if (badgeCounter === 0) {
+          resetLocalStorage()
+        } else {
+          updateTweetStore()
+          updateUserStore()
+        }
       }
     })
   }
 
-  // Run before updating data
   function resetLocalStorage () {
     console.log('Resetting locale storage variables')
     localStorage.set({
       'recentUserUpdates': '{}',
-      'recentTweetUpdates': '{}',
-      'lastUpdate': Date.now(),
-      'badgeCounter': 0
+      'recentTweetUpdates': '{}'
     }, function (res) {
       recentUserUpdates = {}
       recentTweetUpdates = {}
-      lastUpdate = Date.now()
-      badgeCounter = 0
       updateBadge()
+      updateTweetStore()
+      updateUserStore()
     })
   }
 
   // Set badge text to number of recent updates
   function updateBadge () {
     console.log('Updating badge to ', badgeCounter)
+    if (badgeCounter > 0) {
+      window.browser.browserAction.setBadgeText({
+        text: badgeCounter.toString()
+      })
+    } else {
+      clearBadge()
+    }
+  }
+
+  function clearBadge () {
     window.browser.browserAction.setBadgeText({
-      text: badgeCounter.toString()
+      text: ''
     })
   }
 
   function updateUserStore () {
-    // console.log('calling update user store')
     let tx = db.transaction(DB_USER_STORE_NAME, 'readwrite')
     let store = tx.objectStore(DB_USER_STORE_NAME)
     let index = store.index('status')
@@ -257,16 +292,22 @@
 
     req.onsuccess = function (evt) {
       let cursor = evt.target.result
-      if (cursor && cursor.value.updateDate === null) {
+      if (cursor && (cursor.value.status === 'available' || (CHECK_SUSPENDED === true && cursor.value.status === 'suspended'))) {
         let value = cursor.value
         fetch('https://twitter.com/intent/user?user_id=' + value.id)
             .then(function (res) {
               if (res.url === 'https://twitter.com/account/suspended') {
-                updateItemInStore(value, 'suspended', DB_USER_STORE_NAME)
+                if (value.status !== 'suspended') {
+                  updateItemStatus(value, 'suspended', DB_USER_STORE_NAME, 'suspended')
+                }
               } else if (res.status === 404) {
-                updateItemInStore(value, 'deleted', DB_USER_STORE_NAME)
+                updateItemStatus(value, 'deleted', DB_USER_STORE_NAME, 'deleted')
+              } else if (CHECK_SUSPENDED === true && value.status === 'suspended') {
+                totalStatistics[DB_USER_STORE_NAME]['unsuspended']++
+                value.unsuspendCount = !value.unsuspendCount ? 1 : value.unsuspendCount + 1
+                updateItemStatus(value, 'available', DB_USER_STORE_NAME, 'unsuspended')
               } else {
-                addToRecentUpdates(value, DB_USER_STORE_NAME)
+                addItemToWatchList(value, DB_USER_STORE_NAME, 'available')
               }
             })
         cursor.continue()
@@ -289,15 +330,15 @@
 
     req.onsuccess = function (evt) {
       let cursor = evt.target.result
-      if (cursor && cursor.value.updateDate === null) {
+      if (cursor && cursor.value.status === 'available') {
         let value = cursor.value
         fetch('https://twitter.com' + value.permalinkPath)
           .then(function (res) {
             if (res.url === 'https://twitter.com/account/suspended' ||
                 res.status === 404) {
-              updateItemInStore(value, 'deleted', DB_TWEET_STORE_NAME)
+              updateItemStatus(value, 'deleted', DB_TWEET_STORE_NAME, 'deleted')
             } else {
-              addToRecentUpdates(value, DB_TWEET_STORE_NAME)
+              addItemToWatchList(value, DB_TWEET_STORE_NAME, 'available')
             }
           })
         cursor.continue()
@@ -314,14 +355,17 @@
 
   // Check what data was sent in the report, check if already in DB, update recent updates dict
   function addReportToStore (content) {
-    if (Object.keys(content.userData).length > 0) {
+    console.log(content)
+    addToDb(content.reportData, DB_REPORT_STORE_NAME)
+
+    if (content.userData['id'] !== undefined) {
       queryDb(content.userData['id'], DB_USER_STORE_NAME, handleUserReport)
-      addToRecentUpdates(content.userData, DB_USER_STORE_NAME)
+      addItemToWatchList(content.userData, DB_USER_STORE_NAME, 'available')
     }
 
-    if (Object.keys(content.tweetData).length > 0) {
+    if (content.tweetData['id'] !== undefined) {
       queryDb(content.tweetData['id'], DB_TWEET_STORE_NAME, handleTweetReport)
-      addToRecentUpdates(content.tweetData, DB_TWEET_STORE_NAME)
+      addItemToWatchList(content.tweetData, DB_TWEET_STORE_NAME, 'available')
     }
 
     function handleUserReport (entry) {
@@ -331,11 +375,11 @@
         localStorage.set({
           'totalStatistics': JSON.stringify(totalStatistics)})
         addToDb(content.userData, DB_USER_STORE_NAME)
-      } else {
-        // Increment report count if already reported user
-        console.warn('User already reported, so incrementing')
-        entry['reportCount']++
-        addToDb(entry, DB_USER_STORE_NAME)
+      } else if (entry.status === 'suspended' && CHECK_SUSPENDED === true) {
+        console.log('Updating zombie user', content)
+        totalStatistics[DB_USER_STORE_NAME]['unsuspended']++
+        totalStatistics[DB_USER_STORE_NAME]['suspended']--
+        updateItemStatus(content.userData, 'available', DB_USER_STORE_NAME, 'unsuspended')
       }
     }
 
@@ -346,21 +390,23 @@
         totalStatistics[DB_TWEET_STORE_NAME]['reported']++
         localStorage.set({
           'totalStatistics': JSON.stringify(totalStatistics)})
-      } else {
-        console.warn('Tweet already reported')
       }
     }
   }
 
-  function updateItemInStore (value, newStatus, storeName) {
-    value.status = newStatus
-    value.updateDate = Date.now()
-    addToDb(value, storeName)
+  function updateItemStatus (entry, newStatus, storeName, displayStatus) {
+    entry.status = newStatus
+    if (entry['statusHistory'] === undefined) {
+      entry['statusHistory'] = []
+    }
+    entry.statusHistory.push({
+      'date': Date.now(), 'action': displayStatus })
+    addToDb(entry, storeName)
     updateBadge(badgeCounter++)
 
-    totalStatistics[storeName][value.status] += 1
+    totalStatistics[storeName][entry.status] += 1
 
-    addToRecentUpdates(value, storeName)
+    addItemToWatchList(entry, storeName, displayStatus)
 
     localStorage.set({
       'totalStatistics': JSON.stringify(totalStatistics),
@@ -368,8 +414,9 @@
     })
   }
 
-  function addToRecentUpdates (value, storeName) {
+  function addItemToWatchList (value, storeName, displayStatus) {
     console.log('Adding', value, 'to recent updates')
+    value.status = displayStatus
     if (storeName === 'user') {
       recentUserUpdates[value.id] = value
     } else if (storeName === 'tweet') {

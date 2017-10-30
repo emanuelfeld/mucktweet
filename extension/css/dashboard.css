@@ -120,7 +120,15 @@ span.answer {
   background:#0392cf;
 }
 
+.badge.unsuspended {
+  background:#f37736;
+}
+
 span.badge.statistics {
   display: inline-block;
   width: 100px;
+}
+
+#unsuspended {
+  display: none;
 }
