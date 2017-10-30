@@ -15,14 +15,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MuckTweet</title>
     <script src="js/index.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Roboto+Slab|Source+Serif+Pro:400,700" rel="stylesheet">
     <link href="css/index.css" rel="stylesheet" type="text/css">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body class="body">
     <header>
-        <h1 id="menu-title">MuckTweet</h1>
+        <h1 id="menu-title"><a href="./">MuckTweet</a></h1>
         <div id="menu-bar">
             <a href="#about"><div id="menu-about" class="menu-item button about" selected="true">About</div></a>
+            <a href="#faq"><div id="menu-faq" class="menu-item button faq" selected="false">FAQ</div></a>
             <a href="https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk" onclick="trackOutboundLink('https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk'); return false;"><div id="menu-chrome" class="menu-item button chrome" selected="false">Download</div></a>
             <a href="#issues"><div id="menu-issues" class="menu-item button issues" selected="false">Report Bugs</div></a>
             <a href="https://twitter.com/share?url=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fmucktweet%2Fdjckflgmaallfimdmmgalachmkaledhk&text=MuckTweet%20is%20a%20Chrome%20extension%20that%20helps%20users%20keep%20on%20top%20of%20Twitter%20abuse.">
@@ -39,18 +41,30 @@
 
         <p>For those of us without millions of followers, relief can seem more elusive still.</p>
 
-        <p>What happens to our abuse reports? Which ones are addressed and which go unresolved? How long does the process take?</p>
+        <p>You can send in reports, but many go unanswered. Other times overt abuses are deemed OK. When Twitter does respond, their updates can be misleading.</p>
 
         <p><strong>MuckTweet</strong> helps keep you in the loop.</p>
 
         <p>Whenever you report a user or tweet on <a href="https://twitter.com" onclick="trackOutboundLink('https://twitter.com'); return false;">Twitter.com</a>, the MuckTweet browser extension makes a record. It then automatically checks the site for updates on that report&mdash;no extra work needed on your part. All information is stored locally on your computer and is never sent elsewhere.</p>
 
-        <p>You can contact <span style="text-decoration: underline;">mucktweet at gmail dot com</span> with questions.</p>
-    </section>
-    <section class="narrow" selected="false">
-        
         <a class="narrow" href="https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk" onclick="trackOutboundLink('https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk'); return false;"><span class="button narrow">Download for Chrome</span></a>
+
     </section>
+
+    <section id="faq" class="container faq" selected="false">
+        <h2>Frequently Asked Questions</h2>        
+
+        <p class="question"><span class="question">Where does MuckTweet store my information?</span> <span class="answer">All information about your reports is stored locally on your own computer. MuckTweet does not send it anywhere or to anyone.</span></p>       
+
+        <p class="question"><span class="question">How often does MuckTweet check for updates?</span> <span class="answer">Report statuses are updated every day that you visit Twitter.com.</span></p>     
+        <p class="question"><span class="question">Can I use MuckTweet with other Twitter platforms, like TweetDeck?</span> <span class="answer">No, MuckTweet only tracks reports you make on Twitter.com (i.e. the main Twitter site).</span></p>     
+
+        <p class="question"><span class="question">I have multiple Twitter accounts. Will MuckTweet track reports I make from each of them?</span> <span class="answer">As long as you make all your reports on the same computer, MuckTweet will treat them as though they came from the same user. So, yes.</span></p>  
+
+        <p>You can contact <span style="text-decoration: underline;">mucktweet at gmail dot com</span> with additional questions.</p>
+
+    </section>
+
     <section id="donate" class="container donate" selected="false">
         <h2 class="narrow">Donate</h2>
         <p>Buy us a cuppa tea<a></a>.</p>

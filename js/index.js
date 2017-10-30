@@ -11,7 +11,12 @@ function clickHashTab () {
   let oldSection = document.querySelector('section.' + oldHash)
   oldSection.setAttribute('selected', 'false')
 
-  let newHash = window.location.hash.split('#')[1]
+  let newHash
+  if (!window.location.hash) {
+    newHash = 'about'
+  } else {
+    newHash = window.location.hash.split('#')[1]
+  }
   let newMenuItem = document.querySelector('.menu-item.' + newHash)
   newMenuItem.setAttribute('selected', 'true')
   let newSection = document.querySelector('section.' + newHash)
@@ -20,9 +25,7 @@ function clickHashTab () {
 }
 
 window.addEventListener('load', function () {
-  if (window.location.hash) {
-    clickHashTab()
-  }
+  clickHashTab()
 })
 
 function sendLocationWithHash () {
