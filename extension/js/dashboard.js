@@ -12,12 +12,10 @@
   window.addEventListener('load', function (evt) {
     if (window.location.hash) {
       clickHashTab()
-    }
-
-    if (window.location.hash === 'updates') {
+    } else {
       window.browser.runtime.sendMessage({
         'type': 'clearBadge'
-      })
+      })      
     }
 
     localStorage.get({
@@ -46,6 +44,13 @@
   window.addEventListener('hashchange', clickHashTab, false)
 
   function clickHashTab () {
+    if (window.location.hash === '#updates') {
+      console.log('clear the badge')
+      window.browser.runtime.sendMessage({
+        'type': 'clearBadge'
+      })
+    }
+
     let oldMenuItem = document.querySelector('.menu-item[selected="true"]')
     let oldHash = oldMenuItem.id.split('-')[1]
     let oldSection = document.querySelector('section.' + oldHash)
