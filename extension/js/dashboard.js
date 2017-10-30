@@ -15,7 +15,7 @@
     } else {
       window.browser.runtime.sendMessage({
         'type': 'clearBadge'
-      })      
+      })
     }
 
     localStorage.get({

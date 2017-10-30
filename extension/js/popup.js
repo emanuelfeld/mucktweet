@@ -16,7 +16,7 @@
         'content': evt.target.id
       }, function (res) {
         window.open(res.content)
-      })      
+      })
     }
   })
 })()

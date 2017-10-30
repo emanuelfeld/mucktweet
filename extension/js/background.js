@@ -23,7 +23,6 @@
   let recentUserUpdates
   let recentTweetUpdates
   let totalStatistics
-  let lastUpdate
 
   const STATS_DEFAULT = JSON.stringify({
     'user': {
@@ -38,7 +37,9 @@
     }
   })
 
-  // SET UP
+  ////////////
+  // SET UP //
+  ////////////
 
   localStorage.get({
     'recentUserUpdates': '{}',
@@ -51,12 +52,13 @@
     recentTweetUpdates = JSON.parse(res.recentTweetUpdates)
     totalStatistics = JSON.parse(res.totalStatistics)
     badgeCounter = res.badgeCounter
-    lastUpdate = res.lastUpdate
     updateBadge()
     openDb()
   })
 
-  // MESSAGE HANDLERS
+  //////////////////////
+  // MESSAGE HANDLERS //
+  //////////////////////
 
   // Open dashboard on first install
   if (DEBUG === false) {
@@ -95,7 +97,9 @@
     }
   }
 
-  // BASIC DB FUNCTIONS
+  ////////////////////////
+  // BASIC DB FUNCTIONS //
+  ////////////////////////
 
   function openDb () {
     console.log('Opening MuckTweet DB')
@@ -125,6 +129,10 @@
           { keyPath: 'id' })
         objectStore.createIndex('status', 'status')
         objectStore.createIndex('userTweets', 'userId')
+      }
+
+      if (evt.oldVersion === 2) {
+
       }
     }
 
@@ -175,7 +183,9 @@
     return tx.objectStore(storeName)
   }
 
-  // DOWNLOAD STORE AS JSON OR CSV
+  ////////////////////////
+  // DOWNLOAD FUNCTIONS //
+  ////////////////////////
 
   function getAllItemsInStore (storeName, fileFormat) {
     let tx = db.transaction(storeName, 'readonly')
@@ -217,7 +227,9 @@
     tempAnchor.remove()
   }
 
-  // CHECK FOR UPDATES ON REPORTED ITEMS
+  //////////////////////
+  // UPDATE FUNCTIONS //
+  //////////////////////
 
   // Check status on open reports
   function getUpdates () {
@@ -225,9 +237,11 @@
     localStorage.get({
       'lastUpdate': Date.now()
     }, function (res) {
-      lastUpdate = res.lastUpdate
-      if (Date.now() > lastUpdate + UPDATE_WAIT) {
+      if (Date.now() > res.lastUpdate + UPDATE_WAIT) {
         console.log('Updating')
+        localStorage.set({
+          'lastUpdate': Date.now()
+        })
         if (badgeCounter === 0) {
           resetLocalStorage()
         } else {
@@ -242,8 +256,7 @@
     console.log('Resetting locale storage variables')
     localStorage.set({
       'recentUserUpdates': '{}',
-      'recentTweetUpdates': '{}',
-      'lastUpdate': Date.now()
+      'recentTweetUpdates': '{}'
     }, function (res) {
       recentUserUpdates = {}
       recentTweetUpdates = {}
@@ -366,10 +379,7 @@
         console.log('Updating zombie user', content)
         totalStatistics[DB_USER_STORE_NAME]['unsuspended']++
         totalStatistics[DB_USER_STORE_NAME]['suspended']--
-        entry['statusHistory'].push({
-          'date': content.reportData['dateSubmitted'], 'action': 'unsuspended'
-        })
-        addToDb(entry, DB_USER_STORE_NAME)
+        updateItemStatus(content.userData, 'available', DB_USER_STORE_NAME, 'unsuspended')
       }
     }
 
@@ -386,8 +396,11 @@
 
   function updateItemStatus (entry, newStatus, storeName, displayStatus) {
     entry.status = newStatus
+    if (entry['statusHistory'] === undefined) {
+      entry['statusHistory'] = []
+    }
     entry.statusHistory.push({
-      'date': lastUpdate, 'action': displayStatus })
+      'date': Date.now(), 'action': displayStatus })
     addToDb(entry, storeName)
     updateBadge(badgeCounter++)
 
