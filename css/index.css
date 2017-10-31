@@ -69,6 +69,7 @@
   }
 
   .button {
+    font-family:'Roboto Slab', serif;
     display:inline-block;
     border:1px solid #333;
     padding:10px;
@@ -77,7 +78,6 @@
 
   .menu-item {
     color:#333;
-    font-family:'Roboto Slab', serif;
   }
   
   .menu-item[selected='true'] {
