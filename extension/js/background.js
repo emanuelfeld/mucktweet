@@ -90,10 +90,6 @@
       getAllItemsInStore(content.storeName, content.fileFormat)
     } else if (type === 'clearBadge') {
       clearBadge()
-      badgeCounter = 0
-      localStorage.set({
-        'badgeCounter': 0
-      })
     }
   }
 
@@ -129,10 +125,6 @@
           { keyPath: 'id' })
         objectStore.createIndex('status', 'status')
         objectStore.createIndex('userTweets', 'userId')
-      }
-
-      if (evt.oldVersion === 2) {
-
       }
     }
 
@@ -242,12 +234,7 @@
         localStorage.set({
           'lastUpdate': Date.now()
         })
-        if (badgeCounter === 0) {
-          resetLocalStorage()
-        } else {
-          updateTweetStore()
-          updateUserStore()
-        }
+        resetLocalStorage()
       }
     })
   }
@@ -258,9 +245,9 @@
       'recentUserUpdates': '{}',
       'recentTweetUpdates': '{}'
     }, function (res) {
+      clearBadge()
       recentUserUpdates = {}
       recentTweetUpdates = {}
-      updateBadge()
       updateTweetStore()
       updateUserStore()
     })
@@ -282,18 +269,23 @@
     window.browser.browserAction.setBadgeText({
       text: ''
     })
+    badgeCounter = 0
+    localStorage.set({
+      'badgeCounter': 0
+    })
   }
 
   function updateUserStore () {
     let tx = db.transaction(DB_USER_STORE_NAME, 'readwrite')
     let store = tx.objectStore(DB_USER_STORE_NAME)
-    let index = store.index('status')
-    let req = index.openCursor()
+    let req = store.openCursor()
 
     req.onsuccess = function (evt) {
       let cursor = evt.target.result
+
       if (cursor && (cursor.value.status === 'available' || (CHECK_SUSPENDED === true && cursor.value.status === 'suspended'))) {
         let value = cursor.value
+
         fetch('https://twitter.com/intent/user?user_id=' + value.id)
             .then(function (res) {
               if (res.url === 'https://twitter.com/account/suspended') {
