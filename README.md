@@ -2,6 +2,10 @@
 
 A browser extension for Twitter abuse report muckrakers. MuckTweet monitors the status of users and tweets you have reported, notifying you when there has been a change.
 
+Details of report and report users and tweets is stored using the IndexedDB API.
+
+[Download for Chrome](https://chrome.google.com/webstore/detail/mucktweet/djckflgmaallfimdmmgalachmkaledhk)
+
 ## Report and Resolution Timeline
 
 Action: User reports another user or tweet for:
