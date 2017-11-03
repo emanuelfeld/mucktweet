@@ -67,6 +67,10 @@ span.answer {
   display: inline-block;
 }
 
+#version {
+  font-size:15px;
+}
+
 .container {
   padding:20px 0;
 }
@@ -81,8 +85,17 @@ span.answer {
   cursor:pointer;
 }
 
-.menu-item[selected='true'] {
+.button[selected='true'] {
   background-color:#333;
+  color:#FFF;
+}
+
+.button[saved='true'] {
+  cursor:default;
+}
+
+.button[saved='false'] {
+  background-color:#ee4035;
   color:#FFF;
 }
 

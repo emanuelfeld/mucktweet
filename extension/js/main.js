@@ -12,6 +12,7 @@
   let userData = {}
   let tweetData = {}
   let reportData = {}
+  let archiving
 
   let getReportDetails = function () {
     let iframe = document.querySelector('iframe#new-report-flow-frame')
@@ -106,6 +107,12 @@
     window.browser.runtime.sendMessage({'type': 'update'}, function (res) {
       console.log('Sent update message', res.content)
     })
+
+    window.browser.storage.local.get({
+      'archiving': 'true'
+    }, function (res) {
+      archiving = res.archiving
+    })
   })
 
   document.addEventListener('click', function (evt) {
@@ -127,7 +134,8 @@
         'content': {
           'reportData': reportData,
           'userData': userData,
-          'tweetData': tweetData
+          'tweetData': tweetData,
+          'archiving': archiving
         }
       }, function (res) {
         userData = {}

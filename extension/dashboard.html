@@ -7,11 +7,12 @@
 </head>
 <body class="body">
     <header>
-        <h1 id="menu-title">MuckTweet</h1>
+        <h1 id="menu-title">MuckTweet <span id="version">v1.9</span></h1>
         <div id="menu-bar">
             <a href="#updates"><span id="menu-updates" class="menu-item button updates" selected="true">Recently</span></a>
             <a href="#statistics"><span id="menu-statistics" class="menu-item button statistics" selected="false">Statistics</span></a>
             <a href="#download"><span id="menu-download" class="menu-item button download" selected="false">Download Data</span></a>
+            <a href="#options"><span id="menu-options" class="menu-item button options" selected="false">Options</span></a>
             <a href="https://emanuelfeld.github.io/mucktweet#issues"><span id="menu-issues" class="menu-item button issues" selected="false">Report Bugs</span></a>
             <a href="https://emanuelfeld.github.io/mucktweet"><span id="menu-about" class="menu-item button about" selected="false">About</span></a>
             <a href="https://emanuelfeld.github.io/mucktweet#donate"><span id="menu-donate" class="menu-item button donate" selected="false">Donate</span></a>
@@ -69,10 +70,18 @@
     </section>
     <section class="container download" selected="false">
         <h2>Download a local copy of your data.</h2>
-        <h3>JSON format</h2>
+        <h3>JSON format</h3>
         <span id="user-data-json" class="button download-button">User Data &#8595;</span> <span id="tweet-data-json" class="button download-button">Tweet Data &#8595;</span> <span id="report-data-json" class="button download-button">Report Data &#8595;</span>
-        <h3>CSV format</h2>
+        <h3>CSV format</h3>
         <span id="user-data-csv" class="button download-button">User Data &#8595;</span> <span id="tweet-data-csv" class="button download-button">Tweet Data &#8595;</span> <span id="report-data-csv" class="button download-button">Report Data &#8595;</span>
     </section>
+    <section class="container options" selected="false">
+        <span class="button" id="save" saved="true">OPTIONS SAVED</span>
+        <h3>Save a copy of reported tweets to the Internet Archive?</h3>
+        <p><span class="button" id="archive-option-true">YES</span> <span class="button" id="archive-option-false">NO</span></p>
+        <p>
+        </p>
+    </section>
+    <script src="js/options.js"></script>
 </body>
 </html>

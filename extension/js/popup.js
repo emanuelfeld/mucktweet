@@ -8,7 +8,7 @@
   }
 
   document.addEventListener('click', function (evt) {
-    if (evt.target.id === 'updates') {
+    if (evt.target.id === 'updates' || evt.target.id === 'options') {
       window.browser.runtime.sendMessage({
         'type': 'popup',
         'content': evt.target.id
