@@ -60,13 +60,13 @@
   // MESSAGE HANDLERS //
   //////////////////////
 
-  // Open dashboard on first install
+  // Open dashboard options
   if (DEBUG === false) {
     window.browser.runtime.onInstalled.addListener(function (details) {
-      if (details.reason === 'install') {
-        let url = window.browser.extension.getURL('dashboard.html')
-        window.open(url + '#about')
-      }
+      // if (details.reason === 'install') {
+      let url = window.browser.extension.getURL('dashboard.html')
+      window.open(url + '#options')
+      // }
     })
   }
 
@@ -85,6 +85,9 @@
     } else if (type === 'report') {
       // Add each new report to the recent updates list as 'available'
       addReportToStore(content)
+      if (content.archiving === 'true' && content.tweetData['id'] !== undefined) {
+        archiveUrl('https://twitter.com' + content.tweetData['permalinkPath'])
+      }
       sendResponse({'content': 'ok'})
     } else if (type === 'download') {
       getAllItemsInStore(content.storeName, content.fileFormat)
@@ -173,6 +176,17 @@
   function getObjectStore (storeName, mode) {
     let tx = db.transaction(storeName, mode)
     return tx.objectStore(storeName)
+  }
+
+  //////////////////////
+  // BACKUP FUNCTIONS //
+  //////////////////////
+
+  function archiveUrl (url) {
+    fetch('https://web.archive.org/save/' + url)
+      .then(function (res) {
+        console.log(res.status)
+      })
   }
 
   ////////////////////////

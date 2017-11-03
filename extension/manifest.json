@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "MuckTweet",
-    "version": "1.8",
+    "version": "1.9",
     "description": "Monitor your Twitter reports",
     "author": "Emanuel Feld",
     "background": {
@@ -36,6 +36,7 @@
     "options_page": "dashboard.html",
     "permissions": [
         "https://*.twitter.com/*",
+        "https://web.archive.org/*",
         "storage",
         "contextMenus"
     ],
