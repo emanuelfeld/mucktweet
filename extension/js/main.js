@@ -1,7 +1,7 @@
 (function () {
   'use strict'
 
-  const DEBUG = false
+  const DEBUG = true
 
   if (!!window.chrome) {
     window.browser = window.chrome
@@ -29,9 +29,15 @@
           } else if (inputName === 'abuse_type') {
             console.log('abuseType', inputValue)
             reportData['abuseType'] = inputValue
+          } else if (inputName === 'profile_content') {
+            console.log('profileContent', inputValue)
+            reportData['profileContent'] = inputValue
           } else if (inputName.indexOf('victim') > -1) {
             console.log('victim', inputValue)
             reportData['victim'] = inputValue
+          } else {
+            console.log('other input type')
+            reportData[inputName] = inputValue
           }
         }
       }
@@ -95,7 +101,9 @@
 
     return node.classList.contains('add-text') ||
            node.classList.contains('tweet-number') ||
-           node.classList.contains('new-report-flow-done-button')
+           node.classList.contains('new-report-flow-done-button') ||
+           (node.classList.contains('new-report-flow-next-button') &&
+            reportData['profileContent'].length > 0)
   }
 
   function hasReportData () {
